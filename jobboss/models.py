@@ -3,10 +3,10 @@
 #   * Rearrange models' order
 #   * Make sure each model has one field with primary_key=True
 #   * Make sure each ForeignKey has `on_delete` set to the desired behavior.
-#   * Remove `_managed = False` lines if you wish to allow Django to create, modify, and delete the table
+#   * Remove `managed = IS_TEST` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from __future__ import unicode_literals
-
+from jobboss.settings import IS_TEST
 from django.db import models
 
 
@@ -20,7 +20,7 @@ class Account(models.Model):
     qb_id = models.CharField(db_column='QB_ID', max_length=50, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Account'
 
 
@@ -35,7 +35,7 @@ class AdditionalCharge(models.Model):
     est_price = models.DecimalField(db_column='Est_Price', max_digits=19, decimal_places=4)  # Field name made lowercase.
     act_price = models.DecimalField(db_column='Act_Price', max_digits=19, decimal_places=4, blank=True, null=True)  # Field name made lowercase.
     job_revenue = models.BooleanField(db_column='Job_Revenue')  # Field name made lowercase.
-    commssionable = models.BooleanField(db_column='Commssionable')  # Field name made lowercase.
+    commissionable = models.BooleanField(db_column='Commssionable')  # Field name made lowercase.
     processed = models.BooleanField(db_column='Processed')  # Field name made lowercase.
     taxable = models.BooleanField(db_column='Taxable')  # Field name made lowercase.
     note_text = models.TextField(db_column='Note_Text', blank=True, null=True)  # Field name made lowercase. This field type is a guess.
@@ -50,7 +50,7 @@ class AdditionalCharge(models.Model):
     commissionincluded = models.BooleanField(db_column='CommissionIncluded')  # New v12
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Additional_Charge'
 
 
@@ -79,7 +79,7 @@ class Address(models.Model):
     cell_phone = models.CharField(db_column='Cell_Phone', max_length=20, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Address'
 
 
@@ -90,7 +90,7 @@ class Addresscountry(models.Model):
     last_updated = models.DateTimeField(db_column='Last_Updated', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'AddressCountry'
 
 
@@ -102,7 +102,7 @@ class Addressstate(models.Model):
     last_updated = models.DateTimeField(db_column='Last_Updated', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'AddressState'
 
 
@@ -113,7 +113,7 @@ class AutoNumber(models.Model):
     last_updated = models.DateTimeField(db_column='Last_Updated', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Auto_Number'
 
 
@@ -126,7 +126,7 @@ class BarStockCutoff(models.Model):
     last_updated = models.DateTimeField(db_column='Last_Updated')  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Bar_Stock_Cutoff'
 
 
@@ -146,7 +146,7 @@ class BillOfJobs(models.Model):
     component_job_oid = models.CharField(db_column='Component_Job_OID', max_length=36, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Bill_Of_Jobs'
         unique_together = (('parent_job', 'component_job'),)
 
@@ -160,7 +160,7 @@ class BillOfQuotes(models.Model):
     last_updated = models.DateTimeField(db_column='Last_Updated')  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Bill_Of_Quotes'
         unique_together = (('parent_quote', 'component_quote'),)
 
@@ -181,7 +181,7 @@ class Contact(models.Model):
     cell_phone = models.CharField(db_column='Cell_Phone', max_length=20, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Contact'
 
 
@@ -196,7 +196,7 @@ class Cost(models.Model):
     per_ending_amt_5x = models.DecimalField(db_column='Per_Ending_Amt_5x', max_digits=19, decimal_places=4, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Cost'
 
 
@@ -218,7 +218,7 @@ class CurrencyDef(models.Model):
     last_updated = models.DateTimeField(db_column='Last_Updated')  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Currency_Def'
 
 
@@ -232,7 +232,7 @@ class CurrencyRate(models.Model):
     last_updated = models.DateTimeField(db_column='Last_Updated')  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Currency_Rate'
 
 
@@ -268,7 +268,7 @@ class Customer(models.Model):
     send_report_by_email = models.BooleanField(db_column='Send_Report_By_Email')  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Customer'
 
 
@@ -286,7 +286,7 @@ class CustomerPart(models.Model):
     customer_type = models.CharField(db_column='Customer_Type', max_length=15, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Customer_Part'
 
 
@@ -319,7 +319,7 @@ class Delivery(models.Model):
     last_updated_by = models.CharField(db_column='Last_Updated_By', max_length=50, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Delivery'
 
 
@@ -352,7 +352,7 @@ class Employee(models.Model):
     objectid = models.CharField(db_column='ObjectID', unique=True, max_length=36)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Employee'
 
 
@@ -366,7 +366,7 @@ class FiscalPeriod(models.Model):
     last_updated = models.DateTimeField(db_column='Last_Updated')  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Fiscal_Period'
 
 
@@ -379,7 +379,7 @@ class FiscalYear(models.Model):
     last_updated = models.DateTimeField(db_column='Last_Updated')  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Fiscal_Year'
 
 
@@ -397,7 +397,7 @@ class GlEntry(models.Model):
     statement_date = models.DateTimeField(db_column='Statement_Date', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'GL_Entry'
 
 
@@ -411,7 +411,7 @@ class GlobalPref(models.Model):
     last_updated = models.DateTimeField(db_column='Last_Updated')  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Global_Pref'
 
 
@@ -424,7 +424,7 @@ class Holiday(models.Model):
     last_updated = models.DateTimeField(db_column='Last_Updated', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Holiday'
 
 
@@ -434,7 +434,7 @@ class Identitylog(models.Model):
     keyvalue = models.IntegerField(db_column='KeyValue', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'IdentityLog'
 
 
@@ -485,7 +485,7 @@ class InvoiceDetail(models.Model):
     commissionincluded = models.BooleanField(db_column='CommissionIncluded')  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Invoice_Detail'
 
 
@@ -527,7 +527,7 @@ class InvoiceHeader(models.Model):
     paid_date = models.DateTimeField(db_column='Paid_Date', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Invoice_Header'
 
 
@@ -540,7 +540,7 @@ class InvoiceReceipt(models.Model):
     application_type = models.SmallIntegerField(db_column='Application_Type', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Invoice_Receipt'
 
 
@@ -642,7 +642,7 @@ class Job(models.Model):
     commissionincluded = models.BooleanField(db_column='CommissionIncluded')  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Job'
 
 
@@ -658,7 +658,7 @@ class JobException(models.Model):
     exception_type = models.IntegerField(db_column='Exception_Type', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Job_Exception'
 
 
@@ -773,7 +773,7 @@ class JobOperation(models.Model):
     last_updated_by = models.CharField(db_column='Last_Updated_By', max_length=50, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Job_Operation'
 
 
@@ -818,7 +818,7 @@ class JobOperationTime(models.Model):
     employee_oid = models.CharField(db_column='Employee_OID', max_length=36, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Job_Operation_Time'
 
 
@@ -855,7 +855,7 @@ class JournalEntry(models.Model):
     mfg_holder_id = models.CharField(db_column='MFG_Holder_ID', max_length=50, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Journal_Entry'
 
 
@@ -871,7 +871,7 @@ class Location(models.Model):
     last_updated = models.DateTimeField(db_column='Last_Updated')  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Location'
 
 
@@ -881,7 +881,7 @@ class LookupType(models.Model):
     param_sequence = models.IntegerField(db_column='Param_Sequence', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Lookup_Type'
 
 
@@ -941,7 +941,7 @@ class Material(models.Model):
     shelflifeuofm = models.CharField(db_column='ShelfLifeUofM', max_length=10, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Material'
 
 
@@ -957,7 +957,7 @@ class MaterialLocation(models.Model):
     objectid = models.CharField(db_column='ObjectID', unique=True, max_length=36)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Material_Location'
 
 
@@ -1021,7 +1021,7 @@ class MaterialReq(models.Model):
     rounded = models.BooleanField(db_column='Rounded')  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Material_Req'
 
 
@@ -1067,7 +1067,7 @@ class MaterialTrans(models.Model):
     processed = models.BooleanField(db_column='Processed')  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Material_Trans'
 
 
@@ -1080,7 +1080,7 @@ class OpGroup(models.Model):
     last_updated = models.DateTimeField(db_column='Last_Updated', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Op_Group'
 
 
@@ -1103,7 +1103,7 @@ class Operation(models.Model):
     sched_resources = models.FloatField(db_column='Sched_Resources', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Operation'
 
 
@@ -1148,7 +1148,7 @@ class PoDetail(models.Model):
     po_header_oid = models.CharField(db_column='PO_Header_OID', max_length=36, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'PO_Detail'
 
 
@@ -1184,7 +1184,7 @@ class PoHeader(models.Model):
     objectid = models.CharField(db_column='ObjectID', unique=True, max_length=36)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'PO_Header'
         unique_together = (('po', 'po_type'),)
 
@@ -1228,7 +1228,7 @@ class PacklistDetail(models.Model):
     lot = models.CharField(db_column='Lot', max_length=20, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Packlist_Detail'
 
 
@@ -1253,7 +1253,7 @@ class PacklistHeader(models.Model):
     qb_ready = models.NullBooleanField(db_column='QB_Ready')  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Packlist_Header'
 
 
@@ -1334,7 +1334,7 @@ class Preferences(models.Model):
     unipoint_server_path = models.CharField(db_column='uniPoint_Server_Path', max_length=250, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Preferences'
 
 
@@ -1348,7 +1348,7 @@ class PriceBreak(models.Model):
     vendor_material = models.CharField(db_column='Vendor_Material', max_length=50, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Price_Break'
 
 
@@ -1386,7 +1386,7 @@ class Quote(models.Model):
     win_probability = models.IntegerField(db_column='Win_Probability', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Quote'
 
 
@@ -1404,7 +1404,7 @@ class QuoteAddlCharge(models.Model):
     recurring = models.NullBooleanField(db_column='Recurring')  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Quote_Addl_Charge'
 
 
@@ -1451,7 +1451,7 @@ class QuoteOperation(models.Model):
     overlap_method = models.CharField(db_column='Overlap_Method', max_length=3, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Quote_Operation'
 
 
@@ -1488,7 +1488,7 @@ class QuoteOperationQty(models.Model):
     est_ovl_hrs = models.FloatField(db_column='Est_Ovl_Hrs', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Quote_Operation_Qty'
 
 
@@ -1530,7 +1530,7 @@ class QuoteQty(models.Model):
     locked_source = models.NullBooleanField(db_column='Locked_Source')  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Quote_Qty'
 
 
@@ -1572,7 +1572,7 @@ class QuoteReq(models.Model):
     rounded = models.BooleanField(db_column='Rounded')  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Quote_Req'
 
 
@@ -1593,7 +1593,7 @@ class QuoteReqQty(models.Model):
     last_updated = models.DateTimeField(db_column='Last_Updated')  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Quote_Req_Qty'
 
 
@@ -1632,7 +1632,7 @@ class Rfq(models.Model):
     win_probability = models.IntegerField(db_column='Win_Probability', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'RFQ'
 
 
@@ -1647,7 +1647,7 @@ class RfqVendor(models.Model):
     contact = models.IntegerField(db_column='Contact', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'RFQ_Vendor'
 
 
@@ -1665,7 +1665,7 @@ class RawStockOld(models.Model):
     last_updated = models.DateTimeField(db_column='Last_Updated')  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Raw_Stock_Old'
 
 
@@ -1677,7 +1677,7 @@ class RawStockWeight(models.Model):
     tfm_alloy = models.CharField(db_column='TFM_Alloy', max_length=50, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Raw_Stock_Weight'
 
 
@@ -1701,7 +1701,7 @@ class Receipt(models.Model):
     note_text = models.TextField(db_column='Note_Text', blank=True, null=True)  # Field name made lowercase. This field type is a guess.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Receipt'
 
 
@@ -1714,7 +1714,7 @@ class ReceiptDistribution(models.Model):
     last_updated = models.DateTimeField(db_column='Last_Updated')  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Receipt_Distribution'
 
 
@@ -1746,7 +1746,7 @@ class Report(models.Model):
     last_updated = models.DateTimeField(db_column='Last_Updated')  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Report'
 
 
@@ -1801,7 +1801,7 @@ class SoDetail(models.Model):
     commissionincluded = models.BooleanField(db_column='CommissionIncluded')  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'SO_Detail'
 
 
@@ -1834,7 +1834,7 @@ class SoHeader(models.Model):
     prepaid_tax_amount = models.DecimalField(db_column='Prepaid_Tax_Amount', max_digits=19, decimal_places=4, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'SO_Header'
 
 
@@ -1848,7 +1848,7 @@ class SchedBillDist(models.Model):
     discountable = models.NullBooleanField(db_column='Discountable')  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Sched_Bill_Dist'
 
 
@@ -1864,7 +1864,7 @@ class ScheduledBill(models.Model):
     last_updated = models.DateTimeField(db_column='Last_Updated')  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Scheduled_Bill'
 
 
@@ -1877,7 +1877,7 @@ class Serialnumber(models.Model):
     last_updated = models.DateTimeField(db_column='Last_Updated', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'SerialNumber'
         unique_together = (('serialnumber', 'partnumber'),)
 
@@ -1891,7 +1891,7 @@ class Serialnumberdetail(models.Model):
     last_updated = models.DateTimeField(db_column='Last_Updated', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'SerialNumberDetail'
 
 
@@ -1905,7 +1905,7 @@ class Service(models.Model):
     last_updated = models.DateTimeField(db_column='Last_Updated')  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Service'
 
 
@@ -1920,7 +1920,7 @@ class ShapeDimension(models.Model):
     sequence = models.IntegerField(db_column='Sequence', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Shape_Dimension'
 
 
@@ -1933,7 +1933,7 @@ class Shapes(models.Model):
     objectid = models.CharField(db_column='ObjectID', unique=True, max_length=36)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Shapes'
 
 
@@ -1971,7 +1971,7 @@ class Source(models.Model):
     job_operation_oid = models.CharField(db_column='Job_Operation_OID', max_length=36, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Source'
 
 
@@ -1983,7 +1983,7 @@ class StatusChange(models.Model):
     last_updated = models.DateTimeField(db_column='Last_Updated')  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Status_Change'
 
 
@@ -1995,7 +1995,7 @@ class StatusDefinitions(models.Model):
     last_updated = models.DateTimeField(db_column='Last_Updated')  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Status_Definitions'
 
 
@@ -2026,7 +2026,7 @@ class StockItem(models.Model):
     tax_code = models.CharField(db_column='Tax_Code', max_length=15, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Stock_Item'
 
 
@@ -2035,7 +2035,7 @@ class TfmAlloy(models.Model):
     alloy = models.CharField(db_column='Alloy', max_length=20, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'TFM_Alloy'
 
 
@@ -2048,7 +2048,7 @@ class TaxCodeDetail(models.Model):
     last_updated = models.DateTimeField(db_column='Last_Updated', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Tax_Code_Detail'
 
 
@@ -2064,7 +2064,7 @@ class TaxDetail(models.Model):
     gl_account = models.CharField(db_column='GL_Account', max_length=100, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Tax_Detail'
 
 
@@ -2077,7 +2077,7 @@ class Taxer(models.Model):
     last_updated = models.DateTimeField(db_column='Last_Updated', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Taxer'
 
 
@@ -2088,7 +2088,7 @@ class TempId(models.Model):
     item3 = models.CharField(db_column='Item3', max_length=50, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Temp_ID'
         unique_together = (('session_id', 'item'),)
 
@@ -2099,7 +2099,7 @@ class ThirdPartyIntegration(models.Model):
     integration_name = models.CharField(db_column='Integration_Name', max_length=100)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Third_Party_Integration'
 
 
@@ -2132,7 +2132,7 @@ class TransactionData(models.Model):
     close = models.NullBooleanField(db_column='Close')  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Transaction_Data'
 
 
@@ -2146,7 +2146,7 @@ class TransactionDefinition(models.Model):
     ischildtrans = models.BooleanField(db_column='IsChildTrans')  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Transaction_Definition'
 
 
@@ -2179,7 +2179,7 @@ class TransactionDetail(models.Model):
     sn_isscrapped = models.BooleanField(db_column='SN_IsScrapped')  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Transaction_Detail'
 
 
@@ -2195,7 +2195,7 @@ class TransactionSetting(models.Model):
     last_updated = models.DateTimeField(db_column='Last_Updated', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Transaction_Setting'
 
 
@@ -2218,7 +2218,7 @@ class TransactionValue(models.Model):
     transaction_field = models.CharField(db_column='Transaction_Field', max_length=50, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Transaction_Value'
 
 
@@ -2238,7 +2238,7 @@ class UserCode(models.Model):
     objectid = models.CharField(db_column='ObjectID', unique=True, max_length=36)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'User_Code'
         unique_together = (('type', 'code'),)
 
@@ -2261,7 +2261,7 @@ class UserLabels(models.Model):
     objectid = models.CharField(db_column='ObjectID', unique=True, max_length=36)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'User_Labels'
 
 
@@ -2284,7 +2284,7 @@ class UserValues(models.Model):
     last_updated = models.DateTimeField(db_column='Last_Updated', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'User_Values'
 
 
@@ -2313,7 +2313,7 @@ class Vendor(models.Model):
     send_report_by_email = models.BooleanField(db_column='Send_Report_By_Email')  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Vendor'
 
 
@@ -2330,7 +2330,7 @@ class VendorMaterial(models.Model):
     last_updated = models.DateTimeField(db_column='Last_Updated', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Vendor_Material'
 
 
@@ -2348,7 +2348,7 @@ class VendorService(models.Model):
     last_updated = models.DateTimeField(db_column='Last_Updated')  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Vendor_Service'
 
 
@@ -2360,7 +2360,7 @@ class WcdisplaySequence(models.Model):
     last_updated = models.DateTimeField(db_column='Last_Updated')  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'WCDisplay_Sequence'
 
 
@@ -2371,7 +2371,7 @@ class Wcemployee(models.Model):
     last_updated = models.DateTimeField(db_column='Last_Updated', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'WCEmployee'
 
 
@@ -2382,7 +2382,7 @@ class Wcmaterialclass(models.Model):
     last_updated = models.DateTimeField(db_column='Last_Updated', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'WCMaterialClass'
 
 
@@ -2393,7 +2393,7 @@ class Wcmaterialshape(models.Model):
     last_updated = models.DateTimeField(db_column='Last_Updated', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'WCMaterialShape'
 
 
@@ -2411,7 +2411,7 @@ class WcshiftOverride(models.Model):
     last_updated = models.DateTimeField(db_column='Last_Updated', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'WCShift_Override'
 
 
@@ -2428,7 +2428,7 @@ class WcshiftStandard(models.Model):
     last_updated = models.DateTimeField(db_column='Last_Updated', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'WCShift_Standard'
 
 
@@ -2445,7 +2445,7 @@ class WorkcenterLoad(models.Model):
     load_multiplier = models.FloatField(db_column='Load_Multiplier')  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'WorkCenter_Load'
 
 
@@ -2498,5 +2498,5 @@ class WorkCenter(models.Model):
     equipment = models.NullBooleanField(db_column='Equipment')  # Field name made lowercase.
 
     class Meta:
-        _managed = False
+        managed = IS_TEST
         db_table = 'Work_Center'
