@@ -62,7 +62,7 @@ def get_or_create_contact(customer: Customer, contact_name: str) -> Contact:
 
 
 def get_or_create_address(
-        customer: Customer, addr_dict: dict, is_shipping: bool=True
+        customer: Customer, addr_dict: dict, is_shipping: bool = True
 ) -> Address:
     """
     Find existing Address record for this Customer or a create a new Address.

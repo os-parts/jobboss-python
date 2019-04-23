@@ -13,13 +13,14 @@ INSTALLED_APPS = ['jobboss',]
 MIDDLEWARE = []
 WSGI_APPLICATION = 'jobboss.application'
 
-IS_TEST = 'test' in sys.argv
+IS_TEST = 'test' in sys.argv or os.environ.get('JOBBOSS_TEST')
 
 # set up database for test or production
 if IS_TEST:
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.sqlite3'
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': 'jobboss_test',
         }
     }
 else:
