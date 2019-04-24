@@ -1,5 +1,5 @@
 from django.test import TransactionTestCase
-from jobboss.query.job import shipping_option_summary
+from jobboss.query.job import shipping_option_summary, increment_job
 
 SHIPPING_OPTION_1 = {
     'customers_account_number': '12345',
@@ -20,3 +20,7 @@ class TestJob(TransactionTestCase):
                          shipping_option_summary(SHIPPING_OPTION_1))
         self.assertEqual('next day',
                          shipping_option_summary(SHIPPING_OPTION_2))
+
+    def test_increment_job(self):
+        self.assertEqual('123-1a', increment_job('123-1'))
+        self.assertEqual('123-1b', increment_job('123-1a'))
