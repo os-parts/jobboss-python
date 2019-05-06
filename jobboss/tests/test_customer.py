@@ -107,6 +107,7 @@ class TestCustomer(TransactionTestCase):
         self.assertEqual(c+1, Contact.objects.count())
         self.assertEqual(contact.contact_name, 'Jane Smith')
         self.assertEqual(CUST_CODE, contact.customer)
+        self.assertGreater(contact.contact, 0)
 
     def test_match_address(self):
         customer = Customer.objects.first()

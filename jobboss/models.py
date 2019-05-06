@@ -8,6 +8,7 @@
 from __future__ import unicode_literals
 from jobboss.settings import IS_TEST
 from django.db import models
+from jobboss.autonumber import AutoNumberMixin
 
 
 class Account(models.Model):
@@ -489,7 +490,9 @@ class InvoiceDetail(models.Model):
         db_table = 'Invoice_Detail'
 
 
-class InvoiceHeader(models.Model):
+class InvoiceHeader(AutoNumberMixin, models.Model):
+    auto_number_attrs = {'document': 'Invoice'}
+
     document = models.CharField(db_column='Document', primary_key=True, max_length=8)  # Field name made lowercase.
     customer = models.ForeignKey(Customer, models.DO_NOTHING, db_column='Customer')  # Field name made lowercase.
     ship_to = models.IntegerField(db_column='Ship_To', blank=True, null=True)  # Field name made lowercase.
@@ -544,7 +547,9 @@ class InvoiceReceipt(models.Model):
         db_table = 'Invoice_Receipt'
 
 
-class Job(models.Model):
+class Job(AutoNumberMixin, models.Model):
+    auto_number_attrs = {'job': 'Job'}
+
     job = models.CharField(db_column='Job', primary_key=True, max_length=10)  # Field name made lowercase.
     sales_rep = models.ForeignKey(Employee, models.DO_NOTHING, db_column='Sales_Rep', blank=True, null=True)  # Field name made lowercase.
     customer = models.ForeignKey(Customer, models.DO_NOTHING, db_column='Customer', blank=True, null=True)  # Field name made lowercase.
@@ -1805,7 +1810,9 @@ class SoDetail(models.Model):
         db_table = 'SO_Detail'
 
 
-class SoHeader(models.Model):
+class SoHeader(AutoNumberMixin, models.Model):
+    auto_number_attrs = {'sales_order': 'SalesOrder'}
+
     sales_order = models.CharField(db_column='Sales_Order', primary_key=True, max_length=10)  # Field name made lowercase.
     customer = models.CharField(db_column='Customer', max_length=10)  # Field name made lowercase.
     ship_to = models.IntegerField(db_column='Ship_To', blank=True, null=True)  # Field name made lowercase.
