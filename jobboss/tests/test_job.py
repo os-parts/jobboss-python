@@ -1,5 +1,8 @@
 from django.test import TransactionTestCase
-from jobboss.query.job import shipping_option_summary, increment_job
+from jobboss.query.job import shipping_option_summary, increment_job, \
+    get_default_vendor, get_default_work_center, DEFAULT_VENDOR_NAME, \
+    DEFAULT_WORK_CENTER_NAME
+from jobboss.models import WorkCenter, Vendor
 
 SHIPPING_OPTION_1 = {
     'customers_account_number': '12345',
@@ -24,3 +27,21 @@ class TestJob(TransactionTestCase):
     def test_increment_job(self):
         self.assertEqual('123-1a', increment_job('123-1'))
         self.assertEqual('123-1b', increment_job('123-1a'))
+
+    def test_default_wc(self):
+        c = WorkCenter.objects.count()
+        wc = get_default_work_center()
+        self.assertEqual(DEFAULT_WORK_CENTER_NAME, wc.work_center)
+        self.assertEqual(c + 1, WorkCenter.objects.count())
+        wc = get_default_work_center()
+        self.assertEqual(DEFAULT_WORK_CENTER_NAME, wc.work_center)
+        self.assertEqual(c + 1, WorkCenter.objects.count())
+
+    def test_default_vendor(self):
+        c = Vendor.objects.count()
+        v = get_default_vendor()
+        self.assertEqual(DEFAULT_VENDOR_NAME, v.vendor)
+        self.assertEqual(c + 1, Vendor.objects.count())
+        v = get_default_vendor()
+        self.assertEqual(DEFAULT_VENDOR_NAME, v.vendor)
+        self.assertEqual(c + 1, Vendor.objects.count())
