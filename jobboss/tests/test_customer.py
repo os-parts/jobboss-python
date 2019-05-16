@@ -17,8 +17,8 @@ ADDR_DICT = {
     'country': 'USA',
     'first_name': 'John',
     'last_name': 'Smith',
-    'line1': '1600 Penn Ave',
-    'line2': None,
+    'address1': '1600 Penn Ave',
+    'address2': None,
     'phone': None,
     'phone_ext': None,
     'postal_code': '20500',
@@ -46,8 +46,8 @@ class TestCustomer(TransactionTestCase):
             status='Active',
             type='000',  # not sure
             ship_to_id='SHIP',
-            line1=ADDR_DICT['line1'].upper(),
-            line2=ADDR_DICT['line2'],
+            line1=ADDR_DICT['address1'].upper(),
+            line2=ADDR_DICT['address2'],
             city=ADDR_DICT['city'].upper(),
             state=ADDR_DICT['state'].upper(),
             zip=ADDR_DICT['postal_code'],
@@ -112,9 +112,9 @@ class TestCustomer(TransactionTestCase):
     def test_match_address(self):
         customer = Customer.objects.first()
         address = match_address(customer, ADDR_DICT)
-        self.assertEqual(ADDR_DICT['line1'].upper(), address.line1)
+        self.assertEqual(ADDR_DICT['address1'].upper(), address.line1)
         d = ADDR_DICT.copy()
-        d['line1'] = '1600 Pennsylvania Ave NW'  # not a match
+        d['address1'] = '1600 Pennsylvania Ave NW'  # not a match
         self.assertIsNone(match_address(customer, d))
 
     def test_address_code(self):
@@ -129,12 +129,12 @@ class TestCustomer(TransactionTestCase):
         c = Address.objects.count()
         address = get_or_create_address(customer, ADDR_DICT, True)
         self.assertEqual(c, Address.objects.count())
-        self.assertEqual(ADDR_DICT['line1'].upper(), address.line1)
+        self.assertEqual(ADDR_DICT['address1'].upper(), address.line1)
         self.assertFalse(address.billable)
         address = get_or_create_address(customer, ADDR_DICT, False)
         self.assertTrue(address.billable)
         d = ADDR_DICT.copy()
-        d['line1'] = '1600 Pennsylvania Ave NW'  # not a match
+        d['address1'] = '1600 Pennsylvania Ave NW'  # not a match
         address = get_or_create_address(customer, d, True)
         self.assertEqual(c+1, Address.objects.count())
         self.assertTrue(address.shippable)
