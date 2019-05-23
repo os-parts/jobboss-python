@@ -1,7 +1,9 @@
+import uuid
+import datetime
 from django.test import TransactionTestCase
 from jobboss.query.job import shipping_option_summary, increment_job, \
     get_default_vendor, get_default_work_center, DEFAULT_VENDOR_NAME, \
-    DEFAULT_WORK_CENTER_NAME
+    DEFAULT_WORK_CENTER_NAME, create_delivery
 from jobboss.models import WorkCenter, Vendor
 
 SHIPPING_OPTION_1 = {
@@ -45,3 +47,16 @@ class TestJob(TransactionTestCase):
         v = get_default_vendor()
         self.assertEqual(DEFAULT_VENDOR_NAME, v.vendor)
         self.assertEqual(c + 1, Vendor.objects.count())
+
+    def test_delivery(self):
+        now = datetime.datetime.now()
+        d1 = create_delivery(objectid=uuid.uuid4(),
+                             promised_date=now,
+                             promised_quantity=1,
+                             last_updated=now)
+        self.assertEqual(1, d1.delivery)
+        d2 = create_delivery(objectid=uuid.uuid4(),
+                             promised_date=now,
+                             promised_quantity=1,
+                             last_updated=now)
+        self.assertEqual(2, d2.delivery)

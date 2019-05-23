@@ -3,8 +3,10 @@ Database field helpers
 """
 import datetime
 import uuid
-from string import ascii_lowercase, digits
-from jobboss.models import WorkCenter, Job, Vendor
+from string import ascii_lowercase
+from jobboss.models import WorkCenter, Job, Vendor, Delivery
+from django.db import transaction
+from django.db.models import Max
 
 MAX_JOB_RETRIES = 20
 DEFAULT_WORK_CENTER_NAME = 'OTHER'
@@ -113,3 +115,14 @@ def get_available_job(order_number: int, sequence_number: int) -> str:
         tries += 1
     raise ValueError("Can't find an unused job number for {}-{}".format(
         order_number, sequence_number))
+
+
+def create_delivery(**kwargs):
+    with transaction.atomic():
+        delivery_max = Delivery.objects.select_for_update().all().aggregate(
+            Max('delivery'))['delivery__max'] or 0
+        delivery = Delivery.objects.create(
+            delivery=delivery_max + 1,
+            **kwargs
+        )
+        return delivery
