@@ -56,11 +56,6 @@ from a batch file that sets these variables like in this `example.bat`:
 Using the SDK
 -------------
 
-Before importing any ORM classes or queries, you must first initialize the SDK
-by importing the base `jobboss` package:
-
-    import jobboss
-
 ### Using ORM Classes
 
 An ORM class can be imported and used like in this example:
@@ -76,18 +71,6 @@ objects, consult the [Django ORM documentation.](https://docs.djangoproject.com/
 
 The SDK provides queries for common tasks performed by JobBOSS integrations.
 These queries are located in the `jobboss/queries/` folder.
-
-#### Get-or-Create Customer
-
-TODO
-
-#### Create Job
-
-TODO
-
-#### Create Routing
-
-TODO  
 
 
 Advanced Developer Features

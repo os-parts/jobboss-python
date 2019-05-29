@@ -1819,7 +1819,7 @@ class SoHeader(AutoNumberMixin, models.Model):
     contact = models.IntegerField(db_column='Contact', blank=True, null=True)  # Field name made lowercase.
     sales_rep = models.CharField(db_column='Sales_Rep', max_length=6, blank=True, null=True)  # Field name made lowercase.
     order_taken_by = models.CharField(db_column='Order_Taken_By', max_length=6, blank=True, null=True)  # Field name made lowercase.
-    ship_via = models.CharField(db_column='Ship_Via', max_length=15, blank=True, null=True)  # Field name made lowercase.
+    ship_via = models.CharField(db_column='Ship_Via', max_length=15, blank=True, null=True)  # Shipment Method
     tax_code = models.CharField(db_column='Tax_Code', max_length=15, blank=True, null=True)  # Field name made lowercase.
     terms = models.CharField(db_column='Terms', max_length=15, blank=True, null=True)  # Field name made lowercase.
     sales_tax_amt = models.DecimalField(db_column='Sales_Tax_Amt', max_digits=19, decimal_places=4)  # Field name made lowercase.
@@ -1833,8 +1833,8 @@ class SoHeader(AutoNumberMixin, models.Model):
     trade_currency = models.IntegerField(db_column='Trade_Currency', blank=True, null=True)  # Field name made lowercase.
     fixed_rate = models.BooleanField(db_column='Fixed_Rate')  # Field name made lowercase.
     trade_date = models.DateTimeField(db_column='Trade_Date', blank=True, null=True)  # Field name made lowercase.
-    note_text = models.TextField(db_column='Note_Text', blank=True, null=True)  # Field name made lowercase. This field type is a guess.
-    comment = models.TextField(db_column='Comment', blank=True, null=True)  # Field name made lowercase. This field type is a guess.
+    note_text = models.TextField(db_column='Note_Text', blank=True, null=True)  # internal notes
+    comment = models.TextField(db_column='Comment', blank=True, null=True)  # external notes
     last_updated = models.DateTimeField(db_column='Last_Updated')  # Field name made lowercase.
     user_values = models.IntegerField(db_column='User_Values', blank=True, null=True)  # Field name made lowercase.
     source = models.CharField(db_column='Source', max_length=20, blank=True, null=True)  # Field name made lowercase.
