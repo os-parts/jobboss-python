@@ -4,7 +4,7 @@ Database field helpers
 import datetime
 import uuid
 from string import ascii_lowercase
-from jobboss.models import WorkCenter, Job, Vendor, Delivery
+from jobboss.models import WorkCenter, Job, Vendor, Delivery, Material, MaterialReq
 from django.db import transaction
 from django.db.models import Max
 
@@ -126,3 +126,14 @@ def create_delivery(**kwargs):
             **kwargs
         )
         return delivery
+
+
+def create_material_req(**kwargs):
+    with transaction.atomic():
+        mat_req_max = MaterialReq.objects.select_for_update().all().aggregate(
+            Max('material_req'))['material_req__max'] or 0
+        mat_req = MaterialReq.objects.create(
+            material_req=mat_req_max + 1,
+            **kwargs
+        )
+        return mat_req
