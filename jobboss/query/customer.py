@@ -39,7 +39,8 @@ def get_or_create_customer(name: str) -> Customer:
         last_updated=datetime.datetime.utcnow(),
         print_statement=False,
         accept_bo=False,
-        send_report_by_email=False
+        send_report_by_email=False,
+        status='Active'
     )
     return customer
 
