@@ -196,8 +196,6 @@ def match_address(customer: Customer, addr_dict: dict) -> Address:
         phone += ' x{}'.format(addr_dict.get('phone_ext'))
     qs = Address.objects.filter(
         customer=customer,
-        name__iexact='{} {}'.format(addr_dict.get('first_name', ''),
-                                    addr_dict.get('last_name', '')).strip(),
         line1__iexact=addr_dict.get('address1'),
         line2__iexact=addr_dict.get('address2'),
         city__iexact=addr_dict.get('city'),
