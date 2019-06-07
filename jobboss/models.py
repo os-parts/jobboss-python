@@ -8,7 +8,8 @@
 from __future__ import unicode_literals
 from jobboss.settings import IS_TEST
 from django.db import models
-from jobboss.autonumber import AutoNumberMixin
+from jobboss.autonumber import AutoNumberMixin, AutoIncrementColumn, \
+    AutoNumberColumn
 
 
 class Account(models.Model):
@@ -166,7 +167,9 @@ class BillOfQuotes(models.Model):
         unique_together = (('parent_quote', 'component_quote'),)
 
 
-class Contact(models.Model):
+class Contact(AutoNumberMixin, models.Model):
+    auto_number_attrs = [AutoIncrementColumn('contact')]
+
     contactkey = models.AutoField(db_column='ContactKey', primary_key=True)  # Field name made lowercase.
     contact = models.IntegerField(db_column='Contact', unique=True, blank=True, null=True)  # Field name made lowercase.
     customer = models.CharField(db_column='Customer', max_length=10, blank=True, null=True)  # Field name made lowercase.
@@ -291,7 +294,9 @@ class CustomerPart(models.Model):
         db_table = 'Customer_Part'
 
 
-class Delivery(models.Model):
+class Delivery(AutoNumberMixin, models.Model):
+    auto_number_attrs = [AutoIncrementColumn('delivery')]
+
     deliverykey = models.AutoField(db_column='DeliveryKey', primary_key=True)  # Field name made lowercase.
     delivery = models.IntegerField(db_column='Delivery', unique=True, blank=True, null=True)  # Field name made lowercase.
     packlist = models.CharField(db_column='Packlist', max_length=8, blank=True, null=True)  # Field name made lowercase.
@@ -491,7 +496,7 @@ class InvoiceDetail(models.Model):
 
 
 class InvoiceHeader(AutoNumberMixin, models.Model):
-    auto_number_attrs = {'document': 'Invoice'}
+    auto_number_attrs = [AutoNumberColumn('document', 'Invoice')]
 
     document = models.CharField(db_column='Document', primary_key=True, max_length=8)  # Field name made lowercase.
     customer = models.ForeignKey(Customer, models.DO_NOTHING, db_column='Customer')  # Field name made lowercase.
@@ -548,7 +553,7 @@ class InvoiceReceipt(models.Model):
 
 
 class Job(AutoNumberMixin, models.Model):
-    auto_number_attrs = {'job': 'Job'}
+    auto_number_attrs = [AutoNumberColumn('job', 'Job')]
 
     job = models.CharField(db_column='Job', primary_key=True, max_length=10)  # Field name made lowercase.
     sales_rep = models.ForeignKey(Employee, models.DO_NOTHING, db_column='Sales_Rep', blank=True, null=True)  # Field name made lowercase.
@@ -966,7 +971,9 @@ class MaterialLocation(models.Model):
         db_table = 'Material_Location'
 
 
-class MaterialReq(models.Model):
+class MaterialReq(AutoNumberMixin, models.Model):
+    auto_number_attrs = [AutoIncrementColumn('material_req')]
+
     material_reqkey = models.AutoField(db_column='Material_ReqKey', primary_key=True)  # Field name made lowercase.
     material_req = models.IntegerField(db_column='Material_Req', unique=True, blank=True, null=True)  # Field name made lowercase.
     job_operation = models.IntegerField(db_column='Job_Operation', blank=True, null=True)  # Field name made lowercase.
@@ -1811,7 +1818,7 @@ class SoDetail(models.Model):
 
 
 class SoHeader(AutoNumberMixin, models.Model):
-    auto_number_attrs = {'sales_order': 'SalesOrder'}
+    auto_number_attrs = [AutoNumberColumn('sales_order', 'SalesOrder')]
 
     sales_order = models.CharField(db_column='Sales_Order', primary_key=True, max_length=10)  # Field name made lowercase.
     customer = models.CharField(db_column='Customer', max_length=10)  # Field name made lowercase.

@@ -4,9 +4,7 @@ Database field helpers
 import datetime
 import uuid
 from string import ascii_lowercase
-from jobboss.models import WorkCenter, Job, Vendor, Delivery, Material, MaterialReq
-from django.db import transaction
-from django.db.models import Max
+from jobboss.models import WorkCenter, Job, Vendor
 
 MAX_JOB_RETRIES = 20
 DEFAULT_WORK_CENTER_NAME = 'OTHER'
@@ -115,25 +113,3 @@ def get_available_job(order_number: int, sequence_number: int) -> str:
         tries += 1
     raise ValueError("Can't find an unused job number for {}-{}".format(
         order_number, sequence_number))
-
-
-def create_delivery(**kwargs):
-    with transaction.atomic():
-        delivery_max = Delivery.objects.select_for_update().all().aggregate(
-            Max('delivery'))['delivery__max'] or 0
-        delivery = Delivery.objects.create(
-            delivery=delivery_max + 1,
-            **kwargs
-        )
-        return delivery
-
-
-def create_material_req(**kwargs):
-    with transaction.atomic():
-        mat_req_max = MaterialReq.objects.select_for_update().all().aggregate(
-            Max('material_req'))['material_req__max'] or 0
-        mat_req = MaterialReq.objects.create(
-            material_req=mat_req_max + 1,
-            **kwargs
-        )
-        return mat_req

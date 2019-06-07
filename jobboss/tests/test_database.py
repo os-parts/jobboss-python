@@ -32,3 +32,14 @@ class TestDatabase(TransactionTestCase):
         job.save_with_autonumber()
         self.assertEqual('101', job.job)
         self.assertEqual('101', AutoNumber.objects.get(type='Job').last_nbr)
+
+    def test_autoincrement(self):
+        Contact.objects.create(
+            contact=10,
+            last_updated=datetime.datetime.utcnow()
+        )
+        contact = Contact(
+            last_updated=datetime.datetime.utcnow()
+        )
+        contact.save_with_autonumber()
+        self.assertEqual(11, contact.contact)

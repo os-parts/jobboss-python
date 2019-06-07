@@ -56,16 +56,13 @@ def get_or_create_contact(customer: Customer, contact_name: str) -> Contact:
     contact = filter_exact_contact_name(customer, contact_name)
     if contact is not None:
         return contact
-    with transaction.atomic():
-        contact_max = Contact.objects.select_for_update().all().aggregate(
-            Max('contact'))['contact__max'] or 0
-        contact = Contact.objects.create(
-            contact=contact_max + 1,
-            customer=customer.customer,
-            contact_name=contact_name,
-            last_updated=datetime.datetime.utcnow()
-        )
-        return contact
+    contact = Contact(
+        customer=customer.customer,
+        contact_name=contact_name,
+        last_updated=datetime.datetime.utcnow()
+    )
+    contact.save_with_autonumber()
+    return contact
 
 
 def get_or_create_address(
