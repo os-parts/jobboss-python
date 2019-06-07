@@ -64,6 +64,9 @@ class TestCustomer(TransactionTestCase):
     def test_tokenize(self):
         self.assertEqual(['one', 'two', 'three'],
                          tokenize('One, Two, & Three'))
+        self.assertEqual(['one', 'two', 'three', 'four'],
+                         tokenize('One, Two, & Three, Inc. d/b/a Four'))
+        self.assertEqual(['inc'], tokenize('Inc.'))
 
     def test_exact_name_match(self):
         self.assertIsNone(filter_exact_customer_name('bad name'))
@@ -72,6 +75,8 @@ class TestCustomer(TransactionTestCase):
     def test_fuzzy_name_match(self):
         self.assertIsNone(filter_fuzzy_customer_name('bad name'))
         self.assertEqual(JB_NAME, filter_fuzzy_customer_name(PP_NAME).name)
+        self.assertEqual(JB_NAME, filter_fuzzy_customer_name(
+            PP_NAME + ', Inc.').name)
         self.assertIsNone(filter_fuzzy_customer_name('1 customer'))
 
     def test_code_mutation(self):

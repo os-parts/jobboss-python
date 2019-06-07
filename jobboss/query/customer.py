@@ -117,10 +117,17 @@ def get_or_create_address(
 """
 Helper methods for get_or_create queries
 """
+STOP_WORDS = ['and', 'assn', 'assoc', 'co', 'comp', 'corp', 'company',
+              'corporation', 'dba', 'gmbh', 'group', 'inc', 'incorporated',
+              'intl', 'llc', 'llp', 'lp', 'ltd']
 
 
 def tokenize(name):
-    return slugify(name).split('-')
+    tokens = slugify(name).split('-')
+    if len(tokens) > 1:
+        return [t for t in tokens if t not in STOP_WORDS]
+    else:
+        return tokens
 
 
 def filter_exact_customer_name(name):
@@ -140,7 +147,7 @@ def filter_fuzzy_customer_name(name):
         qs = qs.filter(name__icontains=token)
     qs.order_by('-last_updated')
     for customer in qs.all():
-        if slugify(customer.name) == slugify(name):
+        if '-'.join(tokenize(customer.name)) == '-'.join(tokenize(name)):
             return customer
     return None
 
