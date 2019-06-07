@@ -2,7 +2,7 @@ Part OS JobBOSS SDK (Python)
 ============================
 
 The JobBOSS Software Development Kit (SDK) enables Python developers to easily
-read and write data to a JobBOSS instance by directing running queries on a 
+read and write data to a JobBOSS instance by directly running queries on a 
 Microsoft SQL Server database instance. This SDK is built on Django's 
 [Object-Relational Mapping (ORM)](https://docs.djangoproject.com/en/2.2/topics/db/). 
 
@@ -26,13 +26,11 @@ Install the required Python packages:
     cd path\to\jobboss-python
     pip install -r requirements.txt
 
-Make sure `jobboss` to your Python path. You can do this using an environment 
+Make sure `jobboss` is on your Python path. You can do this using an environment 
 variable like this:
 
     set PYTHONPATH=c:\path\to\jobboss-python
     
-or by writing your connector application directly in the jobboss-python folder. 
-
 
 Specifying SQL Server Credentials
 ---------------------------------
