@@ -29,7 +29,8 @@ def terms_summary(payment_details_dict: dict) -> str:
 
 
 def get_work_center(op_name: str) -> WorkCenter:
-    return WorkCenter.objects.filter(work_center__iexact=op_name).first()
+    if op_name:
+        return WorkCenter.objects.filter(work_center__iexact=op_name).first()
 
 
 def get_default_work_center(name: str = None) -> WorkCenter:
@@ -70,6 +71,11 @@ def get_default_work_center(name: str = None) -> WorkCenter:
         uvdecimal1=0,
         equipment=False,
     )
+
+
+def get_vendor(op_name: str) -> Vendor:
+    if op_name:
+        return Vendor.objects.filter(vendor__iexact=op_name).first()
 
 
 def get_default_vendor(name: str = None) -> Vendor:

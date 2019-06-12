@@ -3,7 +3,8 @@ from django.test import TransactionTestCase
 from jobboss.query.customer import tokenize, filter_exact_customer_name, \
     filter_fuzzy_customer_name, increment_code, get_available_customer_code, \
     get_or_create_customer, get_or_create_contact, match_address, \
-    get_available_address_code, get_or_create_address
+    get_available_address_code, get_or_create_address, \
+    get_address_types_by_customer
 from jobboss.models import Customer, Contact, Address
 
 CUST_CODE = 'CUST01'
@@ -44,7 +45,7 @@ class TestCustomer(TransactionTestCase):
         Address.objects.create(
             customer=customer,
             status='Active',
-            type='000',  # not sure
+            type='000',
             ship_to_id='SHIP',
             line1=ADDR_DICT['address1'].upper(),
             line2=ADDR_DICT['address2'],
@@ -136,8 +137,10 @@ class TestCustomer(TransactionTestCase):
         self.assertEqual(c, Address.objects.count())
         self.assertEqual(ADDR_DICT['address1'].upper(), address.line1)
         self.assertFalse(address.billable)
+        self.assertEqual('001', address.type)  # set to default shipping
         address = get_or_create_address(customer, ADDR_DICT, False)
         self.assertTrue(address.billable)
+        self.assertEqual('011', address.type)  # set to default billing
         d = ADDR_DICT.copy()
         d['address1'] = '1600 Pennsylvania Ave NW'  # not a match
         address = get_or_create_address(customer, d, True)
@@ -145,3 +148,48 @@ class TestCustomer(TransactionTestCase):
         self.assertTrue(address.shippable)
         self.assertFalse(address.billable)
         self.assertTrue(address.ship_to_id.startswith('SHIP'))
+        self.assertEqual('100', address.type)
+
+    def test_address_types(self):
+        customer = Customer.objects.first()
+        m, b, s = get_address_types_by_customer(customer)
+        self.assertFalse(m)
+        self.assertFalse(b)
+        self.assertFalse(s)
+
+        customer = Customer.objects.create(
+            customer='CUST02',
+            name='CUSTOMER 2',
+            last_updated=datetime.datetime.utcnow(),
+            print_statement=False,
+            accept_bo=False,
+            send_report_by_email=False
+        )
+        # add addresses to this customer until they have all address types
+        for type_str, type_tuple in [
+            ('000', (False, False, False)),
+            ('100', (True, False, False)),
+            ('010', (True, True, False)),
+            ('001', (True, True, True)),
+        ]:
+            Address.objects.create(
+                customer=customer,
+                status='Active',
+                type=type_str,
+                ship_to_id='SHIP',
+                line1=ADDR_DICT['address1'].upper(),
+                line2=ADDR_DICT['address2'],
+                city=ADDR_DICT['city'].upper(),
+                state=ADDR_DICT['state'].upper(),
+                zip=ADDR_DICT['postal_code'],
+                name='{} {}'.format(ADDR_DICT['first_name'],
+                                    ADDR_DICT['last_name']).upper(),
+                country='US',
+                phone=ADDR_DICT['phone'],
+                lead_days=0,
+                last_updated=datetime.datetime.utcnow(),
+                billable=False,
+                shippable=True
+            )
+            self.assertEqual(type_tuple,
+                             get_address_types_by_customer(customer))

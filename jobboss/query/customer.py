@@ -77,13 +77,26 @@ def get_or_create_address(
     :param is_shipping: Set to True if shipping address; otherwise False
     :return: matched or newly created JobBOSS Address record
     """
+    has_main, has_bill, has_ship = get_address_types_by_customer(customer)
     address = match_address(customer, addr_dict)
     if address is not None:
+        is_main = int(address.type[0])
+        is_def_bill = int(address.type[1])
+        is_def_ship = int(address.type[2])
+        needs_save = False
         if is_shipping and not address.shippable:
             address.shippable = True
-            address.save()
+            needs_save = True
+        if is_shipping and not has_ship:
+            address.type = '{}{}{}'.format(is_main, is_def_bill, 1)
+            needs_save = True
         if not is_shipping and not address.billable:
             address.billable = True
+            needs_save = True
+        if not is_shipping and not has_bill:
+            address.type = '{}{}{}'.format(is_main, 1, is_def_ship)
+            needs_save = True
+        if needs_save:
             address.save()
         return address
     if addr_dict.get('country') == 'USA':
@@ -93,10 +106,14 @@ def get_or_create_address(
     phone = addr_dict.get('phone')
     if phone and addr_dict.get('phone_ext'):
         phone += ' x{}'.format(addr_dict.get('phone_ext'))
+    is_main = int(not has_main)
+    is_def_bill = int(not is_shipping and not has_bill)
+    is_def_ship = int(is_shipping and not has_ship)
+    type_str = '{}{}{}'.format(is_main, is_def_bill, is_def_ship)
     address = Address.objects.create(
         customer=customer,
         status='Active',
-        type='000',
+        type=type_str,
         ship_to_id=get_available_address_code(customer, ship=is_shipping),
         line1=addr_dict.get('address1'),
         line2=addr_dict.get('address2'),
@@ -225,3 +242,12 @@ def get_available_address_code(customer: Customer, ship=True):
         tries += 1
     raise ValueError("Can't find an unused address code for {}".format(
         customer.customer))
+
+
+def get_address_types_by_customer(customer: Customer):
+    types = [d['type'] for d in
+             Address.objects.filter(customer=customer).values('type').all()]
+    has_main = any(int(t[0]) for t in types)
+    has_bill = any(int(t[1]) for t in types)
+    has_ship = any(int(t[2]) for t in types)
+    return has_main, has_bill, has_ship
