@@ -108,6 +108,24 @@ class Addressstate(models.Model):
         db_table = 'AddressState'
 
 
+class Attachment(AutoNumberMixin, models.Model):
+    auto_number_attrs = [AutoIncrementColumn('attachment')]
+
+    attachmentkey = models.AutoField(db_column='AttachmentKey', primary_key=True)  # Field name made lowercase.
+    attachment = models.IntegerField(db_column='Attachment', unique=True, blank=True, null=True)  # Field name made lowercase.
+    owner_type = models.CharField(db_column='Owner_Type', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    owner_id = models.CharField(db_column='Owner_ID', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    attach_path = models.TextField(db_column='Attach_Path', blank=True, null=True)  # Field name made lowercase. This field type is a guess.
+    description = models.CharField(db_column='Description', max_length=254, blank=True, null=True)  # Field name made lowercase.
+    print_attachment = models.BooleanField(db_column='Print_Attachment')  # Field name made lowercase.
+    last_updated = models.DateTimeField(db_column='Last_Updated')  # Field name made lowercase.
+    attach_type = models.CharField(db_column='Attach_Type', max_length=10)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'Attachment'
+
+
 class AutoNumber(models.Model):
     type = models.CharField(db_column='Type', primary_key=True, max_length=15)  # Field name made lowercase.
     system_generated = models.BooleanField(db_column='System_Generated')  # Field name made lowercase.
