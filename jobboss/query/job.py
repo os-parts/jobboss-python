@@ -4,7 +4,8 @@ Database field helpers
 import datetime
 import uuid
 from string import ascii_lowercase
-from jobboss.models import WorkCenter, Job, Vendor
+from django.db.models import Q
+from jobboss.models import WorkCenter, Job, Vendor, Material
 
 MAX_JOB_RETRIES = 20
 DEFAULT_WORK_CENTER_NAME = 'OTHER'
@@ -119,3 +120,21 @@ def get_available_job(order_number: int, sequence_number: int) -> str:
         tries += 1
     raise ValueError("Can't find an unused job number for {}-{}".format(
         order_number, sequence_number))
+
+
+def match_material(part_number: str, revision: str):
+    """Returns a matching Material or None if no match found."""
+    if not part_number:
+        return None
+    pn = part_number.strip()
+    if revision is not None and revision != '':
+        qs = Material.objects.filter(material__iexact=pn, rev__iexact=revision)
+    else:
+        qs = Material.objects.filter(
+            Q(rev__isnull=True) | Q(rev='') | Q(rev='-'),
+            material__iexact=pn
+        )
+    if qs.count() > 0:
+        return qs.first()
+    else:
+        return None
