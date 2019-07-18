@@ -122,7 +122,7 @@ class Attachment(AutoNumberMixin, models.Model):
     attach_type = models.CharField(db_column='Attach_Type', max_length=10)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        managed = IS_TEST
         db_table = 'Attachment'
 
 
