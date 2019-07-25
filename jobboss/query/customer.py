@@ -264,9 +264,10 @@ def match_address(customer: Customer, addr_dict: dict) -> Address:
         elif addr_dict.get('postal_code') != candidate_address.zip:
             continue
         # phone
-        if phone and candidate_address.phone and phone != \
-                candidate_address.phone:
-            continue
+        if phone and candidate_address.phone:
+            if re.sub("[^0-9]", "", phone) != re.sub("[^0-9]", "",
+                                                     candidate_address.phone):
+                continue
         return candidate_address
     return None
 

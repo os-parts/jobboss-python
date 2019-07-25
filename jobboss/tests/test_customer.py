@@ -20,7 +20,7 @@ ADDR_DICT = {
     'last_name': 'Smith',
     'address1': '1600 Penn Ave',
     'address2': None,
-    'phone': None,
+    'phone': '123-456-7890',
     'phone_ext': None,
     'postal_code': '20500',
     'state': 'DC'
@@ -126,7 +126,7 @@ class TestCustomer(TransactionTestCase):
         # try some fuzzier cases
         d = ADDR_DICT.copy()
         d['address1'] = '1600 Penn Avenue'
-        d['phone'] = '123-456-7890'
+        d['phone'] = '1234567890'
         d['postal_code'] = '20500-1234'
         address = match_address(customer, d)
         self.assertIsNotNone(address)
@@ -138,6 +138,11 @@ class TestCustomer(TransactionTestCase):
         d['postal_code'] = '20501'
         address = match_address(customer, d)
         self.assertIsNone(address)
+        d = ADDR_DICT.copy()
+        d['phone'] = '2015551212'
+        address = match_address(customer, d)
+        self.assertIsNone(address)
+
 
     def test_address_code(self):
         customer = Customer.objects.first()
