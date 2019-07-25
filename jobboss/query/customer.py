@@ -1,9 +1,8 @@
 import datetime
 import re
 from django.template.defaultfilters import slugify
-from django.db import transaction
-from django.db.models import Max
 from jobboss.models import Customer, Contact, Address
+from .suffixes import STREET_SUFFIX_ABBREVS
 
 MAX_CODE_LENGTH = 10  # max length of Customer PK
 MAX_CODE_RETRIES = 20
@@ -140,9 +139,22 @@ STOP_WORDS = ['and', 'assn', 'assoc', 'co', 'comp', 'corp', 'company',
 
 
 def tokenize(name):
+    """Tokenization for business names"""
     tokens = slugify(name).split('-')
     if len(tokens) > 1:
         return [t for t in tokens if t not in STOP_WORDS]
+    else:
+        return tokens
+
+
+def address_tokenize(street_address):
+    """Tokenize street address lines"""
+    tokens = slugify(street_address).split('-')
+    if len(tokens) > 1:
+        return [
+            STREET_SUFFIX_ABBREVS[t] if t in STREET_SUFFIX_ABBREVS else t
+            for t in tokens
+        ]
     else:
         return tokens
 
@@ -201,7 +213,9 @@ def match_address(customer: Customer, addr_dict: dict) -> Address:
     """
     Find a matching address (case insensitive) for a given customer looking at
     concatenated name, address line 1 and 2, city, state, zip, country, and
-    concatenated phone number.
+    concatenated phone number. For address line 1 and 2, street suffix
+    abbreviations are intuitively matched and punctuation is ignored. Zip code
+    intuitively handles plus-4 extensions.
 
     :param customer: Customer record
     :param addr_dict: Dictionary containing address fields. Generate using
@@ -215,17 +229,46 @@ def match_address(customer: Customer, addr_dict: dict) -> Address:
     phone = addr_dict.get('phone')
     if phone and addr_dict.get('phone_ext'):
         phone += ' x{}'.format(addr_dict.get('phone_ext'))
+    # first get the set of candidate addresses for this customer
     qs = Address.objects.filter(
         customer=customer,
-        line1__iexact=addr_dict.get('address1'),
-        line2__iexact=addr_dict.get('address2'),
         city__iexact=addr_dict.get('city'),
         state__iexact=addr_dict.get('state'),
-        zip=addr_dict.get('postal_code'),
         country=country_code,
-        phone=phone
     ).order_by('-last_updated')
-    return qs.first()
+    # next iterate through candidate address and return the first fuzzy match
+    # we assume there will never be a very large number of addresses for a
+    # single customer
+    for candidate_address in qs.all():
+        # address line 2
+        if address_tokenize(candidate_address.line1) != address_tokenize(
+                addr_dict.get('address1')):
+            continue
+        # address line 2
+        if addr_dict.get('address2') and address_tokenize(
+                candidate_address.line2) != address_tokenize(
+                addr_dict.get('address2')
+        ):
+            continue
+        # zip code
+        if len(addr_dict.get('postal_code', '')) == 5:
+            if addr_dict.get('postal_code') != candidate_address.zip[0:5]:
+                continue
+        elif len(addr_dict.get('postal_code', '')) == 10:
+            if len(candidate_address.zip) == 5:
+                if candidate_address.zip != addr_dict.get('postal_code')[0:5]:
+                    continue
+            else:
+                if candidate_address.zip != addr_dict.get('postal_code'):
+                    continue
+        elif addr_dict.get('postal_code') != candidate_address.zip:
+            continue
+        # phone
+        if phone and candidate_address.phone and phone != \
+                candidate_address.phone:
+            continue
+        return candidate_address
+    return None
 
 
 def get_available_address_code(customer: Customer, ship=True):

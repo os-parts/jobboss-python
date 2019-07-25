@@ -4,7 +4,7 @@ from jobboss.query.customer import tokenize, filter_exact_customer_name, \
     filter_fuzzy_customer_name, increment_code, get_available_customer_code, \
     get_or_create_customer, get_or_create_contact, match_address, \
     get_available_address_code, get_or_create_address, \
-    get_address_types_by_customer
+    get_address_types_by_customer, address_tokenize
 from jobboss.models import Customer, Contact, Address
 
 CUST_CODE = 'CUST01'
@@ -123,6 +123,22 @@ class TestCustomer(TransactionTestCase):
         d['address1'] = '1600 Pennsylvania Ave NW'  # not a match
         self.assertIsNone(match_address(customer, d))
 
+        # try some fuzzier cases
+        d = ADDR_DICT.copy()
+        d['address1'] = '1600 Penn Avenue'
+        d['phone'] = '123-456-7890'
+        d['postal_code'] = '20500-1234'
+        address = match_address(customer, d)
+        self.assertIsNotNone(address)
+        d = ADDR_DICT.copy()
+        d['postal_code'] = '20501-1234'
+        address = match_address(customer, d)
+        self.assertIsNone(address)
+        d = ADDR_DICT.copy()
+        d['postal_code'] = '20501'
+        address = match_address(customer, d)
+        self.assertIsNone(address)
+
     def test_address_code(self):
         customer = Customer.objects.first()
         self.assertEqual('BILL',
@@ -193,3 +209,9 @@ class TestCustomer(TransactionTestCase):
             )
             self.assertEqual(type_tuple,
                              get_address_types_by_customer(customer))
+
+    def test_address_tokenize(self):
+        self.assertEqual(['123', 'main', 'st'],
+                         address_tokenize('123 Main Street'))
+        self.assertEqual(['123', 'main', 'st'],
+                         address_tokenize('123 Main St.'))
