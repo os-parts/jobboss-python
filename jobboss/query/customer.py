@@ -109,7 +109,7 @@ def get_or_create_address(
     is_def_bill = int(not is_shipping and not has_bill)
     is_def_ship = int(is_shipping and not has_ship)
     type_str = '{}{}{}'.format(is_main, is_def_bill, is_def_ship)
-    address = Address.objects.create(
+    address = Address(
         customer=customer,
         status='Active',
         type=type_str,
@@ -127,6 +127,7 @@ def get_or_create_address(
         billable=not is_shipping,
         shippable=is_shipping
     )
+    address.save_with_autonumber()
     return address
 
 

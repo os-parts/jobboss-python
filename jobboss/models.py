@@ -56,7 +56,9 @@ class AdditionalCharge(models.Model):
         db_table = 'Additional_Charge'
 
 
-class Address(models.Model):
+class Address(AutoNumberMixin, models.Model):
+    auto_number_attrs = [AutoIncrementColumn('address')]
+
     addresskey = models.AutoField(db_column='AddressKey', primary_key=True)  # Field name made lowercase.
     address = models.IntegerField(db_column='Address', unique=True, blank=True, null=True)  # Field name made lowercase.
     customer = models.ForeignKey('Customer', models.DO_NOTHING, db_column='Customer', blank=True, null=True)  # Field name made lowercase.
