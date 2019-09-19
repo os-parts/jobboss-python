@@ -3,7 +3,7 @@ import uuid
 from django.test import TransactionTestCase
 from jobboss.query.job import shipping_option_summary, increment_job, \
     get_default_vendor, get_default_work_center, DEFAULT_VENDOR_NAME, \
-    DEFAULT_WORK_CENTER_NAME, match_material
+    DEFAULT_WORK_CENTER_NAME, get_material
 from jobboss.models import WorkCenter, Vendor, Material
 
 SHIPPING_OPTION_1 = {
@@ -48,48 +48,33 @@ class TestJob(TransactionTestCase):
         self.assertEqual(DEFAULT_VENDOR_NAME, v.vendor)
         self.assertEqual(c + 1, Vendor.objects.count())
 
-    def test_match_material(self):
-        def create_material(pn, rev):
-            return Material.objects.create(
-                material=pn,
-                rev=rev,
-                location_id='',
-                type='F',
-                status='Active',
-                pick_buy_indicator='P',
-                stocked_uofm='ea',
-                purchase_uofm='ea',
-                cost_uofm='ea',
-                price_uofm='ea',
-                standard_cost=0,
-                reorder_qty=0,
-                lead_days=0,
-                uofm_conv_factor=1,
-                lot_trace=False,
-                rd_whole_unit=False,
-                make_buy='M',
-                use_price_breaks=True,
-                last_updated=datetime.datetime.utcnow(),
-                taxable=False,
-                affects_schedule=True,
-                tooling=False,
-                isserialized=False,
-                objectid=uuid.uuid4()
-            )
-        self.assertIsNone(match_material('abc', None))
-        # match null rev
-        create_material('abc', None)
-        self.assertIsNotNone(match_material('abc', None))
-
-        # match blank rev
-        create_material('abc1', '')
-        self.assertIsNotNone(match_material('abc1', None))
-
-        # match - rev
-        create_material('abc2', '-')
-        self.assertIsNotNone(match_material('abc2', None))
-
-        # match revision
-        create_material('abc3', '1')
-        self.assertIsNone(match_material('abc3', None))
-        self.assertIsNotNone(match_material('abc3', '1'))
+    def test_get_material(self):
+        Material.objects.create(
+            material='123',
+            rev='A',
+            location_id='',
+            type='F',
+            status='Active',
+            pick_buy_indicator='P',
+            stocked_uofm='ea',
+            purchase_uofm='ea',
+            cost_uofm='ea',
+            price_uofm='ea',
+            standard_cost=0,
+            reorder_qty=0,
+            lead_days=0,
+            uofm_conv_factor=1,
+            lot_trace=False,
+            rd_whole_unit=False,
+            make_buy='M',
+            use_price_breaks=True,
+            last_updated=datetime.datetime.utcnow(),
+            taxable=False,
+            affects_schedule=True,
+            tooling=False,
+            isserialized=False,
+            objectid=uuid.uuid4()
+        )
+        self.assertIsNotNone(get_material('123'))
+        self.assertIsNotNone(get_material('123 '))
+        self.assertIsNone(get_material('456'))

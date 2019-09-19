@@ -122,19 +122,6 @@ def get_available_job(order_number: int, sequence_number: int) -> str:
         order_number, sequence_number))
 
 
-def match_material(part_number: str, revision: str):
-    """Returns a matching Material or None if no match found."""
-    if not part_number:
-        return None
+def get_material(part_number: str) -> Material:
     pn = part_number.strip()
-    if revision is not None and revision != '':
-        qs = Material.objects.filter(material__iexact=pn, rev__iexact=revision)
-    else:
-        qs = Material.objects.filter(
-            Q(rev__isnull=True) | Q(rev='') | Q(rev='-'),
-            material__iexact=pn
-        )
-    if qs.count() > 0:
-        return qs.first()
-    else:
-        return None
+    return Material.objects.filter(material__iexact=pn).first()
