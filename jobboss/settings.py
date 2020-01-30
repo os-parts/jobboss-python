@@ -3,7 +3,7 @@ import sys
 
 # database authentication from environment
 DB_HOST = os.environ.get('JOBBOSS_DB_HOST')
-DB_PORT = os.environ.get('JOBBOSS_DB_POST', '1433')
+DB_PORT = os.environ.get('JOBBOSS_DB_PORT', '1433')
 DB_NAME = os.environ.get('JOBBOSS_DB_NAME')
 DB_USERNAME = os.environ.get('JOBBOSS_DB_USERNAME', 'sa')
 DB_PASSWORD = os.environ.get('JOBBOSS_DB_PASSWORD')
@@ -36,7 +36,8 @@ else:
             'OPTIONS': {
                 'driver': 'FreeTDS',
                 'unicode_results': True,
-                'host_is_server': True
+                'host_is_server': True,
+                'extra_params': 'tds_version=8.0'
             }
         }
     }
