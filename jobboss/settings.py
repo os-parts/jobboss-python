@@ -3,6 +3,7 @@ import sys
 
 # database authentication from environment
 DB_HOST = os.environ.get('JOBBOSS_DB_HOST')
+DB_PORT = os.environ.get('JOBBOSS_DB_POST', '1433')
 DB_NAME = os.environ.get('JOBBOSS_DB_NAME')
 DB_USERNAME = os.environ.get('JOBBOSS_DB_USERNAME', 'sa')
 DB_PASSWORD = os.environ.get('JOBBOSS_DB_PASSWORD')
@@ -28,9 +29,15 @@ else:
         'default': {
             'ENGINE': 'sql_server.pyodbc',
             'HOST': DB_HOST,
+            'PORT': DB_PORT,
             'NAME': DB_NAME,
             'USER': DB_USERNAME,
-            'PASSWORD': DB_PASSWORD
+            'PASSWORD': DB_PASSWORD,
+            'OPTIONS': {
+                'driver': 'FreeTDS',
+                'unicode_results': True,
+                'host_is_server': True
+            }
         }
     }
 
