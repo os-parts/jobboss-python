@@ -17,9 +17,12 @@ def shipping_option_summary(shipping_option_dict: dict) -> str:
     carrier = shipping_option_dict.get('customers_carrier')
     shipping_method = shipping_option_dict.get('shipping_method')
     if acct_number:
-        return '{} {}'.format(carrier, acct_number)
+        summary = '{} {}'.format(carrier, acct_number)
     else:
-        return shipping_method
+        summary = shipping_method
+    if summary:
+        summary = summary[0:15]
+    return summary
 
 
 def terms_summary(payment_details_dict: dict) -> str:
