@@ -1,15 +1,70 @@
 """
 Database field helpers
 """
+import collections
 import datetime
+from enum import Enum
 import uuid
-from string import ascii_lowercase
-from django.db.models import Q
+from string import ascii_lowercase, ascii_uppercase
 from jobboss.models import WorkCenter, Job, Vendor, Material
 
 MAX_JOB_RETRIES = 20
 DEFAULT_WORK_CENTER_NAME = 'OTHER'
 DEFAULT_VENDOR_NAME = 'OTHER'
+
+
+class AssemblySuffixCounter:
+    """Produce Job number suffix for assembly components."""
+    class NumberingStrategy(Enum):
+        LETTERS = 1
+        NUMBERS = 2
+        EXTENDED = 3
+
+    def __init__(self):
+        self.strategies = {}  # level -> strategy
+
+    def _suffix(self, strategy, index):
+        if strategy == self.NumberingStrategy.LETTERS:
+            return ascii_uppercase[index]
+        elif strategy == self.NumberingStrategy.NUMBERS:
+            return '{}'.format(index + 1)
+        elif strategy == self.NumberingStrategy.EXTENDED:
+            return '{:03d}'.format(index + 1)
+        else:
+            raise ValueError('Invalid numbering strategy')
+
+    def get_suffix(self, level: int, index: int, count: int) -> str:
+        """Return suffix to be appended to top-level job number for assembly
+        components. Fully compatible with `iterate_assembly` from SDK. Always
+        call in depth-first seach ordering.
+
+        Args:
+            level: assembly tree depth of component
+            index: the 0-based index of this component in its tree level
+            count: the total number of components at this tree level
+        """
+        if level == 0:
+            return ''
+        if not len(self.strategies):
+            # initialize first level
+            if count > 26:
+                self.strategies[level] = self.NumberingStrategy.EXTENDED
+            else:
+                self.strategies[level] = self.NumberingStrategy.LETTERS
+        elif level not in self.strategies:
+            assert (level - 1) in self.strategies
+            if self.strategies[level - 1] == self.NumberingStrategy.LETTERS:
+                if count > 9:
+                    self.strategies[level] = self.NumberingStrategy.EXTENDED
+                else:
+                    self.strategies[level] = self.NumberingStrategy.NUMBERS
+            else:
+                if count > 26:
+                    self.strategies[level] = self.NumberingStrategy.EXTENDED
+                else:
+                    self.strategies[level] = self.NumberingStrategy.LETTERS
+
+        return self._suffix(self.strategies[level], index)
 
 
 def shipping_option_summary(shipping_option_dict: dict) -> str:

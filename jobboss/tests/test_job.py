@@ -1,9 +1,10 @@
 import datetime
+import unittest
 import uuid
-from django.test import TransactionTestCase
+from django.test import TestCase
 from jobboss.query.job import shipping_option_summary, increment_job, \
     get_default_vendor, get_default_work_center, DEFAULT_VENDOR_NAME, \
-    DEFAULT_WORK_CENTER_NAME, get_material
+    DEFAULT_WORK_CENTER_NAME, get_material, AssemblySuffixCounter
 from jobboss.models import WorkCenter, Vendor, Material
 
 SHIPPING_OPTION_1 = {
@@ -19,7 +20,7 @@ SHIPPING_OPTION_2 = {
 }
 
 
-class TestJob(TransactionTestCase):
+class TestJob(TestCase):
     def test_ship_via(self):
         self.assertEqual('UPS 12345',
                          shipping_option_summary(SHIPPING_OPTION_1))
@@ -78,3 +79,17 @@ class TestJob(TransactionTestCase):
         self.assertIsNotNone(get_material('123'))
         self.assertIsNotNone(get_material('123 '))
         self.assertIsNone(get_material('456'))
+
+
+class TestAssembly(unittest.TestCase):
+    def test_assembly(self):
+        # simple case, letters then numbers
+        asc = AssemblySuffixCounter()
+        self.assertEqual('', asc.get_suffix(0, 0, 1))
+        self.assertEqual('A', asc.get_suffix(1, 0, 10))
+        self.assertEqual('3', asc.get_suffix(2, 2, 5))
+        # extended then letters
+        asc = AssemblySuffixCounter()
+        self.assertEqual('', asc.get_suffix(0, 0, 1))
+        self.assertEqual('051', asc.get_suffix(1, 50, 100))
+        self.assertEqual('E', asc.get_suffix(2, 4, 11))
