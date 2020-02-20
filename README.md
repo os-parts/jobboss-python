@@ -37,7 +37,8 @@ Specifying SQL Server Credentials
 
 Microsoft SQL Server credentials must be specified in environment variables
 called `JOBBOSS_DB_HOST`, `JOBBOSS_DB_NAME`, `JOBBOSS_DB_USERNAME`, and 
-`JOBBOSS_DB_PASSWORD`.
+`JOBBOSS_DB_PASSWORD`. You can optionally specify `JOBBOSS_DB_PORT` if your
+SQL Server runs on a non-standard port.
 
 When running a script or application that uses this SDK, consider launching
 from a batch file that sets these variables like in this `example.bat`:
