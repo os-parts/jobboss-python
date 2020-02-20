@@ -136,7 +136,7 @@ Helper methods for get_or_create queries
 """
 STOP_WORDS = ['and', 'assn', 'assoc', 'co', 'comp', 'corp', 'company',
               'corporation', 'dba', 'gmbh', 'group', 'inc', 'incorporated',
-              'intl', 'llc', 'llp', 'lp', 'ltd']
+              'intl', 'llc', 'llp', 'lp', 'ltd', 'manufacturing', 'mfg']
 
 
 def tokenize(name):
