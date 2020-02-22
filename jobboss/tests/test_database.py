@@ -1,7 +1,10 @@
 import datetime
+import os
+from tempfile import NamedTemporaryFile
 import uuid
 from django.test import TransactionTestCase
-from jobboss.models import Contact, AutoNumber, Job
+from jobboss.models import Contact, AutoNumber, Job, Account
+from jobboss.export import export_table
 
 
 class TestDatabase(TransactionTestCase):
@@ -43,3 +46,18 @@ class TestDatabase(TransactionTestCase):
         )
         contact.save_with_autonumber()
         self.assertEqual(11, contact.contact)
+
+    def test_export_table(self):
+        Account.objects.create(
+            account='TEST',
+            type='Asset',
+            last_updated=datetime.datetime.now()
+        )
+        f = NamedTemporaryFile()
+        path = f.name
+        f.close()
+        export_table(Account, path)
+        with open(path, 'r') as f:
+            lines = f.readlines()
+        os.remove(path)
+        self.assertEqual(2, len(lines))
