@@ -1,5 +1,6 @@
 import datetime
 import re
+from typing import Optional
 from django.template.defaultfilters import slugify
 from jobboss.models import Customer, Contact, Address
 from .suffixes import STREET_SUFFIX_ABBREVS
@@ -18,14 +19,19 @@ fuzzy record matching to help avoid duplicate records.
 """
 
 
-def get_or_create_customer(name: str) -> Customer:
+def get_or_create_customer(name: str, code: Optional[str] = None) -> Customer:
     """
     Find existing Customer record using fuzzy name matching or create a new
     Customer.
 
     :param name: business name
+    :param code: optional customer code
     :return: matched or newly created JobBOSS Customer record
     """
+    if code:
+        customer = Customer.objects.filter(customer=code).first()
+        if customer is not None:
+            return customer
     customer = filter_exact_customer_name(name)
     if customer is not None:
         return customer
