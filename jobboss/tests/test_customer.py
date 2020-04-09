@@ -1,5 +1,5 @@
 import datetime
-from django.test import TransactionTestCase
+from django.test import TestCase
 from jobboss.query.customer import tokenize, filter_exact_customer_name, \
     filter_fuzzy_customer_name, increment_code, get_available_customer_code, \
     get_or_create_customer, get_or_create_contact, match_address, \
@@ -27,7 +27,7 @@ ADDR_DICT = {
 }
 
 
-class TestCustomer(TransactionTestCase):
+class TestCustomer(TestCase):
     def setUp(self):
         customer = Customer.objects.create(
             customer=CUST_CODE,
@@ -220,3 +220,37 @@ class TestCustomer(TransactionTestCase):
                          address_tokenize('123 Main Street'))
         self.assertEqual(['123', 'main', 'st'],
                          address_tokenize('123 Main St.'))
+
+    def test_initial_address(self):
+        """Test that new customers have default billing and shipping
+        addresses."""
+        business_name = "Big Co."
+        erp_code = "BIGCO"
+        address = {
+            'business_name': business_name,
+            'city': 'Miami',
+            'country': 'USA',
+            'first_name': 'Joe',
+            'last_name': 'Schmo',
+            'address1': '123 NW 7th Ave',
+            'address2': None,
+            'phone': '123-456-7890',
+            'phone_ext': None,
+            'postal_code': '33136-1234',
+            'state': 'FL'
+        }
+        customer = get_or_create_customer(business_name, erp_code)
+        self.assertEqual(
+            (False, False, False),
+            get_address_types_by_customer(customer)
+        )
+        contact = get_or_create_contact(customer, "Joe Schmo")
+        bill_to = get_or_create_address(customer, address, False)
+        contact.address = bill_to.address
+        contact.save()
+        ship_to = get_or_create_address(customer, address, True)
+        # address should be 111
+        self.assertEqual(
+            (True, True, True),
+            get_address_types_by_customer(customer)
+        )
