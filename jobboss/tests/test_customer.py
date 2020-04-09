@@ -35,7 +35,8 @@ class TestCustomer(TestCase):
             last_updated=datetime.datetime.utcnow(),
             print_statement=False,
             accept_bo=False,
-            send_report_by_email=False
+            send_report_by_email=False,
+            status='Active'
         )
         Contact.objects.create(
             customer=CUST_CODE,
@@ -98,6 +99,10 @@ class TestCustomer(TestCase):
         customer = get_or_create_customer(PP_NAME)
         self.assertEqual(c, Customer.objects.count())
         self.assertEqual(JB_NAME, customer.name)
+        customer.status = 'Inactive'
+        customer.save()
+        customer = get_or_create_customer(PP_NAME)
+        self.assertEqual('Active', customer.status)
         customer = get_or_create_customer('Paperless')
         self.assertEqual(c+1, Customer.objects.count())
         self.assertEqual('PAPERLESS', customer.customer)

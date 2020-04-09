@@ -19,13 +19,18 @@ fuzzy record matching to help avoid duplicate records.
 """
 
 
-def get_or_create_customer(name: str, code: Optional[str] = None) -> Customer:
+def get_or_create_customer(
+        name: str,
+        code: Optional[str] = None,
+        set_active: bool = True
+) -> Customer:
     """
     Find existing Customer record using fuzzy name matching or create a new
     Customer.
 
     :param name: business name
     :param code: optional customer code
+    :param set_active: change a matched customer's status to active
     :return: matched or newly created JobBOSS Customer record
     """
     if code:
@@ -33,10 +38,12 @@ def get_or_create_customer(name: str, code: Optional[str] = None) -> Customer:
         if customer is not None:
             return customer
     customer = filter_exact_customer_name(name)
+    if customer is None:
+        customer = filter_fuzzy_customer_name(name)
     if customer is not None:
-        return customer
-    customer = filter_fuzzy_customer_name(name)
-    if customer is not None:
+        if set_active and customer.status != 'Active':
+            customer.status = 'Active'
+            customer.save()
         return customer
     customer = Customer.objects.create(
         customer=get_available_customer_code(name),
