@@ -104,9 +104,19 @@ class TestCustomer(TestCase):
         customer = get_or_create_customer(PP_NAME)
         self.assertEqual('Active', customer.status)
         customer = get_or_create_customer('Paperless')
-        self.assertEqual(c+1, Customer.objects.count())
+        self.assertEqual(c + 1, Customer.objects.count())
         self.assertEqual('PAPERLESS', customer.customer)
         self.assertEqual('Paperless', customer.name)
+        # test that we can look this up by code
+        customer = get_or_create_customer('Other name', code='PAPERLESS')
+        self.assertEqual(c + 1, Customer.objects.count())
+        self.assertEqual('PAPERLESS', customer.customer)
+        self.assertEqual('Paperless', customer.name)
+        self.assertFalse(customer.accept_bo)
+        # test that we can set a field by kwarg
+        customer = get_or_create_customer('Customer 2', accept_bo=True)
+        self.assertEqual(c + 2, Customer.objects.count())
+        self.assertTrue(customer.accept_bo)
 
     def test_contact_get_or_create(self):
         customer = Customer.objects.first()

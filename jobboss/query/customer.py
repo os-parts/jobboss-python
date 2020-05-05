@@ -22,11 +22,13 @@ fuzzy record matching to help avoid duplicate records.
 def get_or_create_customer(
         name: str,
         code: Optional[str] = None,
-        set_active: bool = True
+        set_active: bool = True,
+        **kwargs,
 ) -> Customer:
     """
     Find existing Customer record using fuzzy name matching or create a new
-    Customer.
+    Customer. Additional kwargs can be provided to overwrite default values
+    in columns for customer.
 
     :param name: business name
     :param code: optional customer code
@@ -45,7 +47,7 @@ def get_or_create_customer(
             customer.status = 'Active'
             customer.save()
         return customer
-    customer = Customer.objects.create(
+    customer = Customer(
         customer=get_available_customer_code(name),
         name=name,
         last_updated=datetime.datetime.utcnow(),
@@ -54,6 +56,10 @@ def get_or_create_customer(
         send_report_by_email=False,
         status='Active'
     )
+    if len(kwargs) > 0:
+        for k, v in kwargs.items():
+            setattr(customer, k, v)
+    customer.save()
     return customer
 
 
