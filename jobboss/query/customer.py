@@ -311,7 +311,16 @@ def get_available_address_code(customer: Customer, ship=True):
 def get_address_types_by_customer(customer: Customer):
     types = [d['type'] for d in
              Address.objects.filter(customer=customer).values('type').all()]
-    has_main = any(int(t[0]) for t in types)
-    has_bill = any(int(t[1]) for t in types)
-    has_ship = any(int(t[2]) for t in types)
+    try:
+        has_main = any(int(t[0]) for t in types)
+    except ValueError:
+        has_main = False
+    try:
+        has_bill = any(int(t[1]) for t in types)
+    except ValueError:
+        has_bill = False
+    try:
+        has_ship = any(int(t[2]) for t in types)
+    except ValueError:
+        has_ship = False
     return has_main, has_bill, has_ship
