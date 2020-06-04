@@ -6,7 +6,7 @@ import datetime
 from enum import Enum
 import uuid
 from string import ascii_lowercase, ascii_uppercase
-from jobboss.models import WorkCenter, Job, Vendor, Material
+from jobboss.models import WorkCenter, Job, Vendor, Material, Operation
 
 MAX_JOB_RETRIES = 20
 DEFAULT_WORK_CENTER_NAME = 'OTHER'
@@ -85,6 +85,11 @@ def terms_summary(payment_details_dict: dict) -> str:
         return 'Credit Card'
     else:
         return payment_details_dict.get('purchase_order_number')
+
+
+def get_operation(op_name: str) -> Operation:
+    if op_name:
+        return Operation.objects.filter(operation__iexact=op_name).first()
 
 
 def get_work_center(op_name: str) -> WorkCenter:
