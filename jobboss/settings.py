@@ -44,7 +44,7 @@ if IS_TEST:
             'NAME': 'jobboss_test',
         }
     }
-else:
+    else:
     if DB_INSTANCE:
         DB_PORT = lookup_port_for_instance(DB_HOST, DB_INSTANCE)
     DATABASES = {
@@ -54,14 +54,15 @@ else:
             'PORT': DB_PORT,
             'NAME': DB_NAME,
             'USER': DB_USERNAME,
-            'PASSWORD': DB_PASSWORD,
-            'OPTIONS': {
-                'driver': 'FreeTDS',
-                'unicode_results': True,
-                'host_is_server': True,
-                'extra_params': 'tds_version=8.0'
-            }
+            'PASSWORD': DB_PASSWORD
         }
     }
+    if sys.platform != 'win32':
+        DATABASES['default']['OPTIONS'] = {
+            'driver': 'FreeTDS',
+            'unicode_results': True,
+            'host_is_server': True,
+            'extra_params': 'tds_version=8.0'
+        }
 
 SECRET_KEY = '...'
