@@ -1,4 +1,4 @@
-Django==1.11.28
-django-pyodbc-azure==1.11.15.0
-pyodbc==4.0.28
+Django==2.1.15
+django-pyodbc-azure-2019==2.1.0.0
+pyodbc==4.0.30
 pytz==2019.1
