@@ -61,5 +61,9 @@ else:
         DATABASES['default']['OPTIONS'] = {
             'driver': 'ODBC Driver 17 for SQL Server'
         }
+    else:
+        DATABASES['default']['OPTIONS'] = {
+            'driver': 'SQL Server Native Client 11.0'
+        }
 
 SECRET_KEY = '...'
