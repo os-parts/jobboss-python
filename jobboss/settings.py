@@ -44,7 +44,7 @@ if IS_TEST:
             'NAME': 'jobboss_test',
         }
     }
-    else:
+else:
     if DB_INSTANCE:
         DB_PORT = lookup_port_for_instance(DB_HOST, DB_INSTANCE)
     DATABASES = {
@@ -59,10 +59,11 @@ if IS_TEST:
     }
     if sys.platform != 'win32':
         DATABASES['default']['OPTIONS'] = {
-            'driver': 'FreeTDS',
-            'unicode_results': True,
-            'host_is_server': True,
-            'extra_params': 'tds_version=8.0'
+            'driver': 'ODBC Driver 17 for SQL Server'
+        }
+    else:
+        DATABASES['default']['OPTIONS'] = {
+            'driver': 'SQL Server Native Client 11.0'
         }
 
 SECRET_KEY = '...'
