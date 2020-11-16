@@ -328,6 +328,7 @@ def get_address_types_by_customer(customer: Customer):
 def get_existing_address(
         customer: Customer, is_shipping: bool = True
 ) -> Address:
+
     address_array = []
     values = Address.objects.filter(customer=customer).order_by('-last_updated')
     if len(values) > 1:
