@@ -117,23 +117,6 @@ def get_or_create_address(
         if needs_save:
             address.save()
         return address
-    else:
-        address_array = []
-        values = Address.objects.filter(customer=customer).order_by('-last_updated')
-        if len(values) > 1:
-            values = list(values)
-            for value in values:
-                address_array.append(value)
-        elif len(values) == 1:
-            address_array.append(values)
-        for address in address_array:
-            is_def_bill = int(address.type[1])
-            is_def_ship = int(address.type[2])
-            if is_shipping and is_def_ship == 1:
-                return address
-            elif not is_shipping and is_def_bill == 1:
-                return address
-
     if addr_dict.get('country') == 'USA':
         country_code = 'US'
     else:
@@ -341,3 +324,22 @@ def get_address_types_by_customer(customer: Customer):
     except ValueError:
         has_ship = False
     return has_main, has_bill, has_ship
+
+def get_existing_address(
+        customer: Customer, is_shipping: bool = True
+) -> Address:
+    address_array = []
+    values = Address.objects.filter(customer=customer).order_by('-last_updated')
+    if len(values) > 1:
+        values = list(values)
+        for value in values:
+            address_array.append(value)
+    elif len(values) == 1:
+        address_array.append(values)
+    for address in address_array:
+        is_def_bill = int(address.type[1])
+        is_def_ship = int(address.type[2])
+        if is_shipping and is_def_ship == 1:
+            return address
+        elif not is_shipping and is_def_bill == 1:
+            return address
