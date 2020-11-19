@@ -4,7 +4,8 @@ from jobboss.query.customer import tokenize, filter_exact_customer_name, \
     filter_fuzzy_customer_name, increment_code, get_available_customer_code, \
     get_or_create_customer, get_or_create_contact, match_address, \
     get_available_address_code, get_or_create_address, \
-    get_address_types_by_customer, address_tokenize
+    get_address_types_by_customer, address_tokenize, \
+    get_default_billing_address, get_default_shipping_address
 from jobboss.models import Customer, Contact, Address
 
 CUST_CODE = 'CUST01'
@@ -268,4 +269,55 @@ class TestCustomer(TestCase):
         self.assertEqual(
             (True, True, True),
             get_address_types_by_customer(customer)
+        )
+
+    def test_default_addresses(self):
+        customer = Customer.objects.first()
+        self.assertIsNone(get_default_billing_address(customer))
+        self.assertIsNone(get_default_shipping_address(customer))
+        Address.objects.create(
+            customer=customer,
+            status='Active',
+            type='010',
+            ship_to_id='SHIP',
+            line1='123 BILLING AVE',
+            line2=ADDR_DICT['address2'],
+            city=ADDR_DICT['city'].upper(),
+            state=ADDR_DICT['state'].upper(),
+            zip=ADDR_DICT['postal_code'],
+            name='{} {}'.format(ADDR_DICT['first_name'],
+                                ADDR_DICT['last_name']).upper(),
+            country='US',
+            phone=ADDR_DICT['phone'],
+            lead_days=0,
+            last_updated=datetime.datetime.utcnow(),
+            billable=False,
+            shippable=True
+        )
+        Address.objects.create(
+            customer=customer,
+            status='Active',
+            type='001',
+            ship_to_id='SHIP',
+            line1='123 SHIPPING AVE',
+            line2=ADDR_DICT['address2'],
+            city=ADDR_DICT['city'].upper(),
+            state=ADDR_DICT['state'].upper(),
+            zip=ADDR_DICT['postal_code'],
+            name='{} {}'.format(ADDR_DICT['first_name'],
+                                ADDR_DICT['last_name']).upper(),
+            country='US',
+            phone=ADDR_DICT['phone'],
+            lead_days=0,
+            last_updated=datetime.datetime.utcnow(),
+            billable=False,
+            shippable=True
+        )
+        self.assertEqual(
+            '123 BILLING AVE',
+            get_default_billing_address(customer).line1
+        )
+        self.assertEqual(
+            '123 SHIPPING AVE',
+            get_default_shipping_address(customer).line1
         )
