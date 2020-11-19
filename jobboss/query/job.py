@@ -198,5 +198,4 @@ def get_template_job(part_number: str) -> Job:
         if Job.objects.filter(part_number=pn, status='Template').count() > 0:
             job = Job.objects.filter(part_number=pn, status='Template').last()
 
-
     return job
