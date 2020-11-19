@@ -325,22 +325,13 @@ def get_address_types_by_customer(customer: Customer):
         has_ship = False
     return has_main, has_bill, has_ship
 
-def get_existing_address(
-        customer: Customer, is_shipping: bool = True
-) -> Address:
+def get_default_billing_address(customer: Customer) -> Address:
+    for addr in Address.objects.filter(customer=customer).order_by('-last_updated'):
+        if int(addr.type[1]):
+            return addr
 
-    address_array = []
-    values = Address.objects.filter(customer=customer).order_by('-last_updated')
-    if len(values) > 1:
-        values = list(values)
-        for value in values:
-            address_array.append(value)
-    elif len(values) == 1:
-        address_array.append(values)
-    for address in address_array:
-        is_def_bill = int(address.type[1])
-        is_def_ship = int(address.type[2])
-        if is_shipping and is_def_ship == 1:
-            return address
-        elif not is_shipping and is_def_bill == 1:
-            return address
+
+def get_default_shipping_address(customer: Customer) -> Address:
+    for addr in Address.objects.filter(customer=customer).order_by('-last_updated'):
+        if int(addr.type[2]):
+            return addr
