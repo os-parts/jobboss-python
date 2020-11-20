@@ -191,10 +191,5 @@ def get_material(part_number: str) -> Material:
 
 
 def get_template_job(part_number: str) -> Job:
-    job = None
-    pn = part_number
-    if pn:
-        pn = part_number.strip()
-        if Job.objects.filter(part_number=pn).count() > 0:
-            job = Job.objects.filter(part_number=pn).last()
-    return job
+    if part_number:
+        return Job.objects.filter(part_number=part_number.strip(), status='Template').last()
