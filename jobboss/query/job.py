@@ -195,7 +195,4 @@ def get_template_job(part_number: str) -> Job:
     pn = part_number
     if pn:
         pn = part_number.strip()
-        if Job.objects.filter(part_number=pn, status='Template').count() > 0:
-            job = Job.objects.filter(part_number=pn, status='Template').last()
-
-    return job
+        return Job.objects.filter(part_number=part_number.strip(), status='Template').last()
