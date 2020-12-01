@@ -5,11 +5,15 @@ import pickle
 
 def create_database_snapshot(snapshot_file_path):
     snapshot = {}
-    models = inspect.getmembers(jobboss.models, inspect.isclass)
+    models = inspect.getmembers(jobboss.models, lambda member: inspect.isclass(member) and member.__module__ == 'jobboss.models')
     for model_name, model in models:
-        column_names = tuple(field.name for field in model._meta.get_fields())
-        rows = list(model.objects.all().values_list())
-        snapshot[model_name] = {'columns': column_names, 'rows': rows}
+        try:
+            column_names = tuple(field.name for field in model._meta.get_fields())
+            rows = list(model.objects.all().values_list())
+            snapshot[model_name] = {'columns': column_names, 'rows': rows}
+        except:
+            print(f'Problem with table: {model_name}. Skipping.')
+            continue
     with open(snapshot_file_path, 'wb') as f:
         pickle.dump(snapshot, f)
 
@@ -19,10 +23,13 @@ def compare_database_snapshots(old_snapshot_file_path, new_snapshot_file_path):
         old_snapshot = pickle.load(old_f)
         new_snapshot = pickle.load(new_f)
     for table_name in old_snapshot:
-        table_columns = old_snapshot[table_name]['columns']
-        old_table_rows = old_snapshot[table_name]['rows']
-        new_table_rows = new_snapshot[table_name]['rows']
-        table_diff(table_name, table_columns, old_table_rows, new_table_rows)
+        try:
+            table_columns = old_snapshot[table_name]['columns']
+            old_table_rows = old_snapshot[table_name]['rows']
+            new_table_rows = new_snapshot[table_name]['rows']
+            table_diff(table_name, table_columns, old_table_rows, new_table_rows)
+        except KeyError:
+            continue
 
 
 def table_diff(table_name, table_columns, old_table_rows, new_table_rows):
