@@ -324,3 +324,15 @@ def get_address_types_by_customer(customer: Customer):
     except ValueError:
         has_ship = False
     return has_main, has_bill, has_ship
+
+
+def get_default_billing_address(customer: Customer) -> Address:
+    for addr in Address.objects.filter(customer=customer).order_by('-last_updated'):
+        if int(addr.type[1]):
+            return addr
+
+
+def get_default_shipping_address(customer: Customer) -> Address:
+    for addr in Address.objects.filter(customer=customer).order_by('-last_updated'):
+        if int(addr.type[2]):
+            return addr

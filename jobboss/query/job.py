@@ -188,3 +188,8 @@ def get_available_job(order_number: int, sequence_number: int) -> str:
 def get_material(part_number: str) -> Material:
     pn = part_number.strip()
     return Material.objects.filter(material__iexact=pn).first()
+
+
+def get_template_job(part_number: str) -> Job:
+    if part_number:
+        return Job.objects.filter(part_number=part_number.strip(), status='Template').last()
