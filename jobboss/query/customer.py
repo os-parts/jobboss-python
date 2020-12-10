@@ -8,6 +8,7 @@ from .suffixes import STREET_SUFFIX_ABBREVS
 MAX_CODE_LENGTH = 10  # max length of Customer PK
 MAX_CODE_RETRIES = 20
 MAX_ADDR_CODE_LENGTH = 6  # max length of Ship_To_ID
+SUFFIX_LENGTH = None
 
 """
 Queries for finding and creating Customer, Contact, and Address records using
@@ -23,6 +24,9 @@ def get_or_create_customer(
         name: str,
         code: Optional[str] = None,
         set_active: bool = True,
+        max_code_length = MAX_CODE_LENGTH,
+        max_code_retries = MAX_CODE_RETRIES,
+        suffix_length = SUFFIX_LENGTH,
         **kwargs,
 ) -> Customer:
     """
@@ -48,7 +52,7 @@ def get_or_create_customer(
             customer.save()
         return customer
     customer = Customer(
-        customer=get_available_customer_code(name),
+        customer=get_available_customer_code(name, max_code_length, max_code_retries, suffix_length),
         name=name,
         last_updated=datetime.datetime.utcnow(),
         print_statement=False,
@@ -201,7 +205,7 @@ def filter_fuzzy_customer_name(name):
     return None
 
 
-def increment_code(code, max_code_length=MAX_CODE_LENGTH):
+def increment_code(code, max_code_length=MAX_CODE_LENGTH, suffix_length=SUFFIX_LENGTH):
     search = re.search('(\d+)$', code)
     if search is None:
         if len(code) < max_code_length:
@@ -212,19 +216,24 @@ def increment_code(code, max_code_length=MAX_CODE_LENGTH):
         suffix = search.group(0)
         base_code = code[0:-len(suffix)]
         new_suffix = str(int(search.group(0)) + 1)
+        if suffix_length is not None:
+            new_suffix_format = f'{{:0{suffix_length}d}}'
+            new_suffix = new_suffix_format.format(int(new_suffix))
         remove = len(base_code) + len(new_suffix) - max_code_length
         if remove > 0:
             base_code = base_code[0:-remove]
         return base_code + new_suffix
 
 
-def get_available_customer_code(name):
-    code = name.upper()[0:MAX_CODE_LENGTH]
+def get_available_customer_code(name, max_code_length=MAX_CODE_LENGTH,
+                                max_code_retries=MAX_CODE_RETRIES,
+                                suffix_length=SUFFIX_LENGTH):
+    code = name.upper()[0:max_code_length]
     tries = 0
-    while tries < MAX_CODE_RETRIES:
+    while tries < max_code_retries:
         if Customer.objects.filter(customer=code).count() == 0:
             return code
-        code = increment_code(code)
+        code = increment_code(code, max_code_length, suffix_length)
         tries += 1
     raise ValueError("Can't find an unused customer code for {}".format(name))
 
