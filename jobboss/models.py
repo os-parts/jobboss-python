@@ -1629,7 +1629,9 @@ class QuoteReqQty(models.Model):
         db_table = 'Quote_Req_Qty'
 
 
-class Rfq(models.Model):
+class Rfq(AutoNumberMixin, models.Model):
+    auto_number_attrs = [AutoNumberColumn('rfq', 'Rfq')]
+
     rfq = models.CharField(db_column='RFQ', primary_key=True, max_length=10)  # Field name made lowercase.
     customer = models.CharField(db_column='Customer', max_length=10, blank=True, null=True)  # Field name made lowercase.
     sales_rep = models.CharField(db_column='Sales_Rep', max_length=6, blank=True, null=True)  # Field name made lowercase.
