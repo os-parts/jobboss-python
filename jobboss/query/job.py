@@ -20,8 +20,10 @@ class AssemblySuffixCounter:
         NUMBERS = 2
         EXTENDED = 3
 
-    def __init__(self):
+    def __init__(self, use_letters=True, separator=''):
         self.strategies = {}  # level -> strategy
+        self.use_letters = use_letters
+        self.separator = separator
 
     def _suffix(self, strategy, index):
         if strategy == self.NumberingStrategy.LETTERS:
@@ -36,7 +38,7 @@ class AssemblySuffixCounter:
     def get_suffix(self, level: int, index: int, count: int) -> str:
         """Return suffix to be appended to top-level job number for assembly
         components. Fully compatible with `iterate_assembly` from SDK. Always
-        call in depth-first seach ordering.
+        call in depth-first search ordering.
 
         Args:
             level: assembly tree depth of component
@@ -50,7 +52,10 @@ class AssemblySuffixCounter:
             if count > 26:
                 self.strategies[level] = self.NumberingStrategy.EXTENDED
             else:
-                self.strategies[level] = self.NumberingStrategy.LETTERS
+                if self.use_letters:
+                    self.strategies[level] = self.NumberingStrategy.LETTERS
+                else:
+                    self.strategies[level] = self.NumberingStrategy.NUMBERS
         elif level not in self.strategies:
             assert (level - 1) in self.strategies
             if self.strategies[level - 1] == self.NumberingStrategy.LETTERS:
@@ -62,9 +67,12 @@ class AssemblySuffixCounter:
                 if count > 26:
                     self.strategies[level] = self.NumberingStrategy.EXTENDED
                 else:
-                    self.strategies[level] = self.NumberingStrategy.LETTERS
+                    if self.use_letters:
+                        self.strategies[level] = self.NumberingStrategy.LETTERS
+                    else:
+                        self.strategies[level] = self.NumberingStrategy.NUMBERS
 
-        return self._suffix(self.strategies[level], index)
+        return f'{self.separator}{self._suffix(self.strategies[level], index)}'
 
 
 def shipping_option_summary(shipping_option_dict: dict) -> str:
