@@ -18,6 +18,22 @@ def create_database_snapshot(snapshot_file_path):
         pickle.dump(snapshot, f)
 
 
+def create_slim_database_snapshot(snapshot_file_path):
+    snapshot = {}
+    models = inspect.getmembers(jobboss.models, lambda member: inspect.isclass(member) and member.__module__ == 'jobboss.models')
+    for model_name, model in models:
+        try:
+            column_names = tuple(field.name for field in model._meta.get_fields())
+            total_row_count = model.objects.count()
+            rows = list(model.objects.all()[total_row_count - 10:].values_list())
+            snapshot[model_name] = {'columns': column_names, 'rows': rows}
+        except:
+            print(f'Problem with table: {model_name}. Skipping.')
+            continue
+        with open(snapshot_file_path, 'wb') as f:
+            pickle.dump(snapshot, f)
+
+
 def compare_database_snapshots(old_snapshot_file_path, new_snapshot_file_path):
     with open(old_snapshot_file_path, 'rb') as old_f, open(new_snapshot_file_path, 'rb') as new_f:
         old_snapshot = pickle.load(old_f)
