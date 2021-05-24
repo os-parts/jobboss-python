@@ -193,3 +193,8 @@ def get_material(part_number: str) -> Material:
 def get_template_job(part_number: str) -> Job:
     if part_number:
         return Job.objects.filter(part_number=part_number.strip(), status='Template').last()
+
+
+def get_job(job_name: str) -> Job:
+    if job_name:
+        return Job.objects.filter(job__iexact=job_name).first()
