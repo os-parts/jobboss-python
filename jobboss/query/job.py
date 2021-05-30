@@ -186,7 +186,7 @@ def get_available_job(order_number: int, sequence_number: int) -> str:
 
 
 def get_material(part_number: str) -> Material:
-    pn = part_number.strip()
+    pn = part_number[:30].strip()
     return Material.objects.filter(material__iexact=pn).first()
 
 
