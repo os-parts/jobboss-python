@@ -45,6 +45,7 @@ def get_or_create_customer(
     if customer is not None:
         if set_active and customer.status != 'Active':
             customer.status = 'Active'
+            customer.ship_via = None
             customer.save()
         return customer
     customer = Customer(
